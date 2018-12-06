@@ -110,15 +110,18 @@ def history(team):
         print(team, "has not played in the NCAA tournament since 2003")
 
 
+def helpmsg():
+    print("Options:")
+    print(" --Type Winner Year to get Champion of given year (from 2003-2017)")
+    print(" --Type all to get all NCAA Tournament match results (from 2003-2017)")
+    print(" --Type Team to get results of this team's past matches of NCAA Tournament (from 2003-2017)")
+    print(" --Type Team 1 Team 2 to get results of NCAA Tournament matches (from 2003-2017)")
+    print(" --NOTE: If Team is 2 words, combine with ''")
+    print(" --Type exit to end program")
+    print(" --Type help at any time to get options")
+
 ext = False
-print("Options:")
-print(" --Type Winner Year to get Champion of given year (from 2003-2017)")
-print(" --Type all to get all NCAA Tournament match results (from 2003-2017)")
-print(" --Type Team to get results of this team's past matches of NCAA Tournament (from 2003-2017)")
-print(" --Type Team 1 Team 2 to get results of NCAA Tournament matches (from 2003-2017)")
-print(" --NOTE: If Team is 2 words, combine with ''")
-print(" --Type exit to end program")
-print(" --Type help at any time to get options")
+helpmsg()
 while(ext != True):
     print("")
     inpt = input("Enter: ")
@@ -140,14 +143,7 @@ while(ext != True):
 
     if len(inpt_list) == 1:
         if inpt_list[0] == 'help' or inpt_list[0] == 'Help':
-            print("Options:")
-            print(" --Type Winner Year to get Champion of given year (from 2003-2017)")
-            print(" --Type all to get all NCAA Tournament match results (from 2003-2017)")
-            print(" --Type Team to get results of this team's past matches of NCAA Tournament (from 2003-2017)")
-            print(" --Type Team 1 Team 2 to get results of NCAA Tournament matches (from 2003-2017)")
-            print(" --NOTE: If Team is 2 words, combine with ''")
-            print(" --Type exit to end program")
-            print(" --Type help at any time to get options")
+            helpmsg()
         elif inpt_list[0] == 'all' or inpt_list[0] == 'All':
             all_matches()
         elif inpt_list[0] == 'exit' or inpt_list[0] == 'Exit':
