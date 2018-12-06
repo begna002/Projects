@@ -1,6 +1,6 @@
 import pandas as pd
 import sys
-data = pd.read_csv("NCAATourneyDetailedREsultsEnriched2018.csv")
+data = pd.read_csv("NCAATourneyDetailedResultsEnriched2018.csv")
 teams = pd.read_csv("Teams.csv")
 
 d = {'this_team' :[], 'other_team' : [], 'won' :[], 'year' :[], 'score': []}
