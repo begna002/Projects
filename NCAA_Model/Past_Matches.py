@@ -131,7 +131,7 @@ while(ext != True):
     if inpt != ['']:
         while i < len(inpt):
             sub = inpt[i]
-            if sub[0] == "'":
+            if sub[0] == "'":   #Removing apostrophes for 2-Word Teams
                 strn = inpt[i] + " " + inpt[i+1]
                 length = len(strn) - 1
                 new_strn = strn[1:length]
