@@ -97,7 +97,7 @@ def history(team):
                     final_loser.append(d['other_team'][i])
                     print("CHAMPION")
         if d['this_team'][i] == team and d['won'][i] == 'Lose':
-            founr = True
+            found = True
             print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome: ", d['won'][i], "| Score:", d['score'][i])
     if len(champion) > 0:
         print("")
