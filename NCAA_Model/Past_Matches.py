@@ -144,11 +144,19 @@ while(ext != True):
         while i < len(inpt):
             sub = inpt[i]
             if sub[0] == "'":   #Removing apostrophes for 2-Word Teams
-                strn = inpt[i] + " " + inpt[i+1]
-                length = len(strn) - 1
-                new_strn = strn[1:length]
-                inpt_list.append(new_strn)
-                i += 2
+                sub2 = inpt[i + 1]
+                if sub2[-1] != "'": #Removing apostrophes for 2-Word Teams
+                    strn = inpt[i] + " " + inpt[i+1] + " " + inpt[i+2]
+                    length = len(strn) - 1
+                    new_strn = strn[1:length]
+                    inpt_list.append(new_strn)
+                    i += 3
+                else:
+                    strn = inpt[i] + " " + inpt[i+1]
+                    length = len(strn) - 1
+                    new_strn = strn[1:length]
+                    inpt_list.append(new_strn)
+                    i += 2
             else:
                 inpt_list.append(inpt[i])
                 i += 1
