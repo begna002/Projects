@@ -145,7 +145,7 @@ while(ext != True):
             sub = inpt[i]
             if sub[0] == "'":   #Removing apostrophes for 2-Word Teams
                 sub2 = inpt[i + 1]
-                if sub2[-1] != "'": #Removing apostrophes for 2-Word Teams
+                if sub2[-1] != "'": #Removing apostrophes for 3-Word Teams
                     strn = inpt[i] + " " + inpt[i+1] + " " + inpt[i+2]
                     length = len(strn) - 1
                     new_strn = strn[1:length]
