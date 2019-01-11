@@ -2,6 +2,7 @@ import pandas as pd
 import sys
 
 data = pd.read_csv("Big_Dance_CSV.csv")
+teams = pd.read_csv("Teams.csv")
 
 d = {'this_team' :[], 'other_team' : [], 'won' :[], 'year' :[], 'score': []}
 
@@ -41,6 +42,10 @@ for i in range(len(data.Year)):
 def all_matches():
     for i in range(len(d['this_team'])):
         print("This Team:", d['this_team'][i], "| Other Team:", d['other_team'][i], "| Won/Lost: ", d['won'][i], "| Year:", d['year'][i])
+
+def all_Teams():
+    for i in range(len(teams.TeamName)):
+        print(teams.TeamName[i], "| First D1 Season:", teams.FirstD1Season[i], "| Last D1 Season:", teams.LastD1Season[i])
 
 def Match_Up(team1, team2):
     print("")
@@ -124,12 +129,14 @@ def history(team):
 
 def helpmsg():
     print("Options:")
-    print(" --Type Winner Year to get Champion of given year (from 1985-2018)")
-    print(" --Type all to get all NCAA Tournament match results (from 1985-2018)")
-    print(" --Type Team Name to get results of this team's past matches of NCAA Tournament (from 1985-2018)")
-    print(" --Type Team 1 Name Team 2 Name to get results of NCAA Tournament matches (from 1985-2018)")
+    print(" --NOTE: Dataset only spans from 1985-2018")
+    print(" --Type Winner Year to get Champion of given year")
+    print(" --Type All to get all NCAA Tournament match results")
+    print(" --Type Teams to get all of the schools to have been in the NCAA Tournament")
+    print(" --Type Team Name to get results of this team's past matches of NCAA Tournament")
+    print(" --Type Team 1 Name Team 2 Name to get results of NCAA Tournament matches")
     print(" --NOTE: If Team Name is greater than 2 words, combine with ''")
-    print(" --Type exit to end program")
+    print(" --Type Exit to end program")
     print(" --Type help at any time to get options")
 
 ext = False
@@ -166,6 +173,8 @@ while(ext != True):
             helpmsg()
         elif inpt_list[0] == 'all' or inpt_list[0] == 'All':
             all_matches()
+        elif inpt_list[0] == 'teams' or inpt_list[0] == 'Teams':
+            all_Teams()
         elif inpt_list[0] == 'exit' or inpt_list[0] == 'Exit':
             ext = True
         else:
