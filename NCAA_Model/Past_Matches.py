@@ -3,8 +3,10 @@ import sys
 
 data = pd.read_csv("Big_Dance_CSV.csv")
 teams = pd.read_csv("Teams.csv")
+mop = pd.read_csv("MOP.csv")
 
-d = {'this_team' :[], 'other_team' : [], 'won' :[], 'year' :[], 'score': []}
+d = {'this_team' : [], 'other_team' : [], 'won' : [], 'year' : [], 'score': []}
+d2 = {'year' : [], 'player' : [], 'school' : []}
 
 for i in range(len(data.Year)):
     if data.Score1[i] > data.Score2[i]:
@@ -38,12 +40,18 @@ for i in range(len(data.Year)):
         d['score'].append((data.Score2[i], data.Score1[i]))
         d['score'].append((data.Score1[i], data.Score2[i]))
 
+for i in range(len(mop.Year)):
+    d2['year'].append(mop.Year[i])
+    d2['player'].append(mop.Player[i])
+    d2['school'].append(mop.School[i])
         
 def all_matches():
+    print("")
     for i in range(len(d['this_team'])):
         print("This Team:", d['this_team'][i], "| Other Team:", d['other_team'][i], "| Won/Lost: ", d['won'][i], "| Year:", d['year'][i])
 
 def all_Teams():
+    print("")
     for i in range(len(teams.TeamName)):
         print(teams.TeamName[i], "| First D1 Season:", teams.FirstD1Season[i], "| Last D1 Season:", teams.LastD1Season[i])
 
@@ -127,10 +135,18 @@ def history(team):
         print(team, "has not played in the NCAA tournament since 1985")
 
 
+def MOP(year):
+    print("")
+    for i in range(len(d2['year'])):
+        if d2['year'][i] == year:
+            print(d2['player'][i], "was the Most Outstanding Player in", d2['year'][i], "representing", d2['school'][i])
+
 def helpmsg():
+    print("")
     print("Options:")
     print(" --NOTE: Dataset only spans from 1985-2018")
-    print(" --Type Winner Year to get Champion of given year")
+    print(" --Type Winner Year to get Champion of the given year")
+    print(" --Type MOP Year to get the Most Outstanding Player of the given year")
     print(" --Type All to get all NCAA Tournament match results")
     print(" --Type Teams to get all of the schools to have been in the NCAA Tournament")
     print(" --Type Team Name to get results of this team's past matches of NCAA Tournament")
@@ -182,10 +198,21 @@ while(ext != True):
             history(team)
 
     if len(inpt_list) == 2:
-        if inpt_list[0] == 'Winner':
+        if inpt_list[0] == 'Winner' or inpt_list[0] == "winner":
             yearC = inpt_list[1]
             yearI = int(yearC)
-            year_Champ(yearI)
+            if yearI > 2018 or yearI < 1985:
+                print("Error: Given year is not within range")
+            else:
+                year_Champ(yearI)
+
+        elif inpt_list[0] == "MOP" or inpt_list[0] == "mop":
+            yearC = inpt_list[1]
+            yearI = int(yearC)
+            if yearI > 2018 or yearI < 1985:
+                print("Error: Given year is not within range")
+            else:
+                MOP(yearI)
             
         else:
             team1 = inpt_list[0]
