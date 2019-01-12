@@ -5,7 +5,7 @@ data = pd.read_csv("Big_Dance_CSV.csv")
 teams = pd.read_csv("Teams.csv")
 mop = pd.read_csv("MOP.csv")
 
-d = {'this_team' : [], 'other_team' : [], 'won' : [], 'year' : [], 'score': []}
+d = {'this_team' : [], 'other_team' : [], 'won' : [], 'year' : [], 'score': [], 'region' : []}
 d2 = {'year' : [], 'player' : [], 'school' : []}
 
 for i in range(len(data.Year)):
@@ -24,6 +24,9 @@ for i in range(len(data.Year)):
         
         d['score'].append((data.Score1[i], data.Score2[i]))
         d['score'].append((data.Score2[i], data.Score1[i]))
+
+        d['region'].append(data.RegionName[i])
+        d['region'].append(data.RegionName[i])
     else:
         d['this_team'].append(data.Team2[i])
         d['this_team'].append(data.Team1[i])
@@ -39,6 +42,9 @@ for i in range(len(data.Year)):
         
         d['score'].append((data.Score2[i], data.Score1[i]))
         d['score'].append((data.Score1[i], data.Score2[i]))
+
+        d['region'].append(data.RegionName[i])
+        d['region'].append(data.RegionName[i])
 
 for i in range(len(mop.Year)):
     d2['year'].append(mop.Year[i])
@@ -107,30 +113,38 @@ def year_Champ(year):
 def history(team):
     champion = []
     final_loser = []
+    final_four = []
+    ff_winner = []
     print("")
     last = False
     found = False
-    if team == 'Villanova':
-        last = True
+    
     for i in range(len(d['this_team'])):
         if d['this_team'][i] == team and d['won'][i] == 'Win':
             found = True
             print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome: ", d['won'][i], "| Score:", d['score'][i])
-            if d['year'][i] != 2018:
-                if (d['year'][i+2]) == (d['year'][i] + 1):
-                    champion.append(d['year'][i])
-                    final_loser.append(d['other_team'][i])
-                    print("CHAMPION")
+            if d['region'][i] == 'Championship':
+                champion.append(d['year'][i])
+                final_loser.append(d['other_team'][i])
         if d['this_team'][i] == team and d['won'][i] == 'Lose':
             found = True
             print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome: ", d['won'][i], "| Score:", d['score'][i])
+            if d['region'][i] == 'Final Four':
+                final_four.append(d['year'][i])
+                ff_winner.append(d['other_team'][i])
+                
     if len(champion) > 0:
         print("")
         print("NCAA Champions in:")
         for i in range(len(champion)):
             print(champion[i], "against", final_loser[i])
-    if last == True:
-        print("2018 against Michigan")
+
+    if len(final_four) > 0:
+        print("")
+        print("Went to Final Four in:")
+        for i in range(len(final_four)):
+            print(final_four[i], "losing to", ff_winner[i])
+    
     if found == False:
         print(team, "has not played in the NCAA tournament since 1985")
 
