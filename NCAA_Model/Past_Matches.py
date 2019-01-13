@@ -5,7 +5,7 @@ data = pd.read_csv("Big_Dance_CSV.csv")
 teams = pd.read_csv("Teams.csv")
 mop = pd.read_csv("MOP.csv")
 
-d = {'this_team' : [], 'other_team' : [], 'won' : [], 'year' : [], 'score': [], 'region' : []}
+d = {'this_team' : [], 'other_team' : [], 'won' : [], 'year' : [], 'score': [], 'round' : []}
 d2 = {'year' : [], 'player' : [], 'school' : []}
 
 for i in range(len(data.Year)):
@@ -25,8 +25,8 @@ for i in range(len(data.Year)):
         d['score'].append((data.Score1[i], data.Score2[i]))
         d['score'].append((data.Score2[i], data.Score1[i]))
 
-        d['region'].append(data.RegionName[i])
-        d['region'].append(data.RegionName[i])
+        d['round'].append(data.Round[i])
+        d['round'].append(data.Round[i])
     else:
         d['this_team'].append(data.Team2[i])
         d['this_team'].append(data.Team1[i])
@@ -43,8 +43,8 @@ for i in range(len(data.Year)):
         d['score'].append((data.Score2[i], data.Score1[i]))
         d['score'].append((data.Score1[i], data.Score2[i]))
 
-        d['region'].append(data.RegionName[i])
-        d['region'].append(data.RegionName[i])
+        d['round'].append(data.Round[i])
+        d['round'].append(data.Round[i])
 
 for i in range(len(mop.Year)):
     d2['year'].append(mop.Year[i])
@@ -113,37 +113,55 @@ def year_Champ(year):
 def history(team):
     champion = []
     final_loser = []
+    final_score = []
     final_four = []
     ff_winner = []
-    print("")
+    ff_score = []
+    elite_eight = []
+    ee_winner = []
+    ee_score = []
     last = False
     found = False
+    print("")
+    print("All NCAA Games since 1985:")
     
     for i in range(len(d['this_team'])):
         if d['this_team'][i] == team and d['won'][i] == 'Win':
             found = True
-            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome: ", d['won'][i], "| Score:", d['score'][i])
-            if d['region'][i] == 'Championship':
+            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome:", d['won'][i], "| Score:", d['score'][i])
+            if d['round'][i] == 6:
                 champion.append(d['year'][i])
                 final_loser.append(d['other_team'][i])
+                final_score.append(d['score'][i])
         if d['this_team'][i] == team and d['won'][i] == 'Lose':
             found = True
-            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome: ", d['won'][i], "| Score:", d['score'][i])
-            if d['region'][i] == 'Final Four':
+            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome:", d['won'][i], "| Score:", d['score'][i])
+            if d['round'][i] == 5:
                 final_four.append(d['year'][i])
                 ff_winner.append(d['other_team'][i])
+                ff_score.append(d['score'][i])
+            if d['round'][i] == 4:
+                elite_eight.append(d['year'][i])
+                ee_winner.append(d['other_team'][i])
+                ee_score.append(d['score'][i])
                 
     if len(champion) > 0:
         print("")
         print("NCAA Champions in:")
         for i in range(len(champion)):
-            print(champion[i], "against", final_loser[i])
+            print(champion[i], "against", final_loser[i], "| Score:", final_score[i])
 
     if len(final_four) > 0:
         print("")
-        print("Went to Final Four in:")
+        print("Went to the Final Four in:")
         for i in range(len(final_four)):
-            print(final_four[i], "losing to", ff_winner[i])
+            print(final_four[i], "losing to", ff_winner[i], "| Score:", ff_score[i])
+            
+    if len(elite_eight) > 0:
+        print("")
+        print("Went to the Elite Eight in:")
+        for i in range(len(elite_eight)):
+            print(elite_eight[i], "losing to", ee_winner[i], "| Score:", ee_score[i])
     
     if found == False:
         print(team, "has not played in the NCAA tournament since 1985")
@@ -163,11 +181,11 @@ def helpmsg():
     print(" --Type MOP Year to get the Most Outstanding Player of the given year")
     print(" --Type All to get all NCAA Tournament match results")
     print(" --Type Teams to get all of the schools to have been in the NCAA Tournament")
-    print(" --Type Team Name to get results of this team's past matches of NCAA Tournament")
-    print(" --Type Team 1 Name Team 2 Name to get results of NCAA Tournament matches")
+    print(" --Type Team Name to get results of this team's past matches in the NCAA Tournament")
+    print(" --Type Team 1 Name Team 2 Name to get results of head-to-head NCAA Tournament matches")
     print(" --NOTE: If Team Name is greater than 2 words, combine with ''")
     print(" --Type Exit to end program")
-    print(" --Type help at any time to get options")
+    print(" --Type Help at any time to get options")
 
 ext = False
 helpmsg()
