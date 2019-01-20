@@ -7,6 +7,7 @@ mop = pd.read_csv("MOP.csv")
 
 d = {'this_team' : [], 'other_team' : [], 'won' : [], 'year' : [], 'score': [], 'round' : []}
 d2 = {'year' : [], 'player' : [], 'school' : []}
+team_LST = []
 
 for i in range(len(data.Year)):
     if data.Score1[i] > data.Score2[i]:
@@ -50,6 +51,10 @@ for i in range(len(mop.Year)):
     d2['year'].append(mop.Year[i])
     d2['player'].append(mop.Player[i])
     d2['school'].append(mop.School[i])
+
+for i in range(len(teams.TeamName)):
+    team_LST.append(teams.TeamName[i])
+   
         
 def all_matches():
     print("")
@@ -59,7 +64,7 @@ def all_matches():
 def all_Teams():
     print("")
     for i in range(len(teams.TeamName)):
-        print(teams.TeamName[i], "| First D1 Season:", teams.FirstD1Season[i], "| Last D1 Season:", teams.LastD1Season[i])
+        print(team_LST[i], "| First D1 Season:", teams.FirstD1Season[i], "| Last D1 Season:", teams.LastD1Season[i])
 
 def Match_Up(team1, team2):
     print("")
@@ -177,15 +182,20 @@ def helpmsg():
     print("")
     print("Options:")
     print(" --NOTE: Dataset only spans from 1985-2018")
+    print(" --NOTE: If Team Name is greater than 2 words, combine with ''")
     print(" --Type Winner Year to get Champion of the given year")
     print(" --Type MOP Year to get the Most Outstanding Player of the given year")
     print(" --Type All to get all NCAA Tournament match results")
     print(" --Type Teams to get all of the schools to have been in the NCAA Tournament")
     print(" --Type Team Name to get results of this team's past matches in the NCAA Tournament")
     print(" --Type Team 1 Name Team 2 Name to get results of head-to-head NCAA Tournament matches")
-    print(" --NOTE: If Team Name is greater than 2 words, combine with ''")
     print(" --Type Exit to end program")
     print(" --Type Help at any time to get options")
+
+def error_Message():
+    print("Error: No teams given to compute past match-ups")
+    print("")
+    print("Must give proper inputs")
 
 ext = False
 helpmsg()
@@ -227,7 +237,10 @@ while(ext != True):
             ext = True
         else:
             team = inpt_list[0]
-            history(team)
+            if team in team_LST:
+                history(team)
+            else:
+                error_Message()
 
     if len(inpt_list) == 2:
         if inpt_list[0] == 'Winner' or inpt_list[0] == "winner":
@@ -249,11 +262,12 @@ while(ext != True):
         else:
             team1 = inpt_list[0]
             team2 = inpt_list[1]
-            Match_Up(team1, team2)
+            if team1 in team_LST and team2 in team_LST:
+                Match_Up(team1, team2)
+            else:
+                error_Message()
 
     if len(inpt_list) < 1 or len(inpt_list) > 2:
-        print("Error: No teams given to compute past match-ups")
-        print("")
-        print("Must give proper inputs")
+        error_Message()
 
 print("Done")
