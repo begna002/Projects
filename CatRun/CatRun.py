@@ -791,9 +791,26 @@ def game_loop():
 
         #Left Fireball/platform collision
         for i in range(new_fireball_length2):
-            for j in range(new_platform_length2):
+            for j in range(new_platform_length):
                 if pygame.sprite.spritecollideany(new_fireball2[i], platform[j]):
                     new_fireball2[i].kill()
+
+        #Right Fireball/platform2 collision
+        for i in range(new_fireball_length):
+            for j in range(new_platform_length2):
+                if pygame.sprite.spritecollideany(new_fireball[i], platform2[j]):
+                    new_fireball[i].kill()
+
+        #Left Fireball/platform2 collision
+        for i in range(new_fireball_length2):
+            for j in range(new_platform_length2):
+                if pygame.sprite.spritecollideany(new_fireball2[i], platform2[j]):
+                    new_fireball2[i].kill()
+
+        #Fireball/initial wall collision
+        for i in range(new_fireball_length2):
+            if pygame.sprite.spritecollideany(new_fireball2[i], wall):
+                new_fireball2[i].kill()
 
         #Right Fireball/Snail collision
         for i in range(new_fireball_length):
