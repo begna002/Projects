@@ -59,7 +59,7 @@ for i in range(len(teams.TeamName)):
 def all_matches():
     print("")
     for i in range(len(d['this_team'])):
-        print("This Team:", d['this_team'][i], "| Other Team:", d['other_team'][i], "| Won/Lost: ", d['won'][i], "| Year:", d['year'][i])
+        print("This Team:", d['this_team'][i], "| Other Team:", d['other_team'][i], "| Won/Lost: ", d['won'][i], "| Year:", d['year'][i], "| Round:", d['round'][i])
 
 def all_Teams():
     print("")
@@ -133,14 +133,14 @@ def history(team):
     for i in range(len(d['this_team'])):
         if d['this_team'][i] == team and d['won'][i] == 'Win':
             found = True
-            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome:", d['won'][i], "| Score:", d['score'][i])
+            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome:", d['won'][i], "| Score:", d['score'][i], "| Round:", d['round'][i])
             if d['round'][i] == 6:
                 champion.append(d['year'][i])
                 final_loser.append(d['other_team'][i])
                 final_score.append(d['score'][i])
         if d['this_team'][i] == team and d['won'][i] == 'Lose':
             found = True
-            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome:", d['won'][i], "| Score:", d['score'][i])
+            print("Year:", d['year'][i], "| Match against:", d['other_team'][i], "| Outcome:", d['won'][i], "| Score:", d['score'][i], "| Round:", d['round'][i])
             if d['round'][i] == 5:
                 final_four.append(d['year'][i])
                 ff_winner.append(d['other_team'][i])
