@@ -110,121 +110,137 @@ def game_loop(highscore):
             self.inHole = False
             self.min_movement = 100
             self.max_movement = 200
+            self.round_over = False
             
         def update(self, pressed_keys):
-            self.isStationary = True
-            self.isFiring = False
+            if self.round_over == False:
+                self.isStationary = True
+                self.isFiring = False
 
-            if pressed_keys[K_UP] and self.isJumping == False and self.isFalling == False:
-                self.isStationary = False
-                self.isJumping = True
-                self.playjump = True
-                self.isFiring = False
-            if pressed_keys[K_DOWN] and self.isJumping == False and self.isFalling == False:
-                self.isStationary = False
-                self.rect.move_ip(0, 2)
-            if pressed_keys[K_LEFT]:
-                self.isStationary = False
-                self.walkingLeft = True
-                self.walkingRight = False
-                self.isFiring = False
-                self.walk = 0
-                if self.walkL == 99:
+                if pressed_keys[K_UP] and self.isJumping == False and self.isFalling == False:
+                    self.isStationary = False
+                    self.isJumping = True
+                    self.playjump = True
+                    self.isFiring = False
+                if pressed_keys[K_DOWN] and self.isJumping == False and self.isFalling == False:
+                    self.isStationary = False
+                    self.rect.move_ip(0, 2)
+                if pressed_keys[K_LEFT]:
+                    self.isStationary = False
+                    self.walkingLeft = True
+                    self.walkingRight = False
+                    self.isFiring = False
+                    self.walk = 0
+                    if self.walkL == 99:
+                        self.walkL = 0
+                    else:
+                        self.walkL += 1
+                    if self.rect.left > self.min_movement:
+                        self.rect.move_ip(-2, 0)
+                if pressed_keys[K_RIGHT]:
+                    self.isStationary = False
+                    self.walkingRight = True
+                    self.walkingLeft = False
+                    self.isFiring = False
                     self.walkL = 0
-                else:
-                    self.walkL += 1
-                if self.rect.left > self.min_movement:
-                    self.rect.move_ip(-2, 0)
-            if pressed_keys[K_RIGHT]:
-                self.isStationary = False
-                self.walkingRight = True
-                self.walkingLeft = False
-                self.isFiring = False
-                self.walkL = 0
+                    if self.walk == 99:
+                        self.walk = 0
+                    else:
+                        self.walk += 1
+                    if self.rect.left < self.max_movement:
+                        self.rect.move_ip(2, 0)
+                if pressed_keys[K_SPACE]:
+                    self.isFiring = True
+                    self.walk = 0
+                    self.walkL = 0
+                
+                #walking animation
+                if self.walk % 25 == 0 and self.walkingRight == True and self.isStationary == False:
+                    ind = int(self.walk / 25)
+                    self.image = walking[ind].convert_alpha()
+                if self.walk == 1 and self.isStationary == False:
+                    self.image = walking[0].convert_alpha()
+                if self.walkL % 25 == 0 and self.walkingLeft == True and self.isStationary == False:
+                    ind2 = int(self.walkL / 25)
+                    self.image = walkingL[ind2].convert_alpha()
+                if self.walkL == 1 and self.isStationary == False:
+                    self.image = walkingL[0].convert_alpha()
+
+                #Jumping mechanism
+                if self.isJumping == True:
+                    self.isStationary = False
+                    if self.playjump == True:
+                        pygame.mixer.Sound.play(jump)
+                    self.playjump = False
+                    if self.rect.top > self.jumpheight:
+                        self.rect.move_ip(0, -3)
+                        if self.walkingRight == True:
+                            self.image = jumping[0].convert_alpha()
+                        else:
+                            self.image = jumping[1].convert_alpha()
+                    else:
+                        self.isFalling = True
+                        self.isJumping = False
+                        self.jump = 0
+                #Falling Mechanism
+                if self.isFalling == True:
+                    self.rect.move_ip(0, 2)
+                    if self.rect.bottom == 533:
+                        self.walk = 0
+                        self.walkL = 0
+
+                #stationary animation
+                if self.isStationary == True and self.walkingRight == True:
+                    self.stationaryL = 0
+                    if self.stationary % 50 == 0:
+                        ind = int(self.stationary / 50)
+                        self.image = stationary[ind].convert_alpha()
+                    if self.stationary == 99:
+                        self.stationary = 0
+                    else:
+                        self.stationary += 1
+                if self.isStationary == True and self.walkingLeft == True:
+                    self.stationary = 0
+                    if self.stationaryL % 50 == 0:
+                        ind = int(self.stationaryL / 50)
+                        self.image = stationaryL[ind].convert_alpha()
+                    if self.stationaryL == 99:
+                        self.stationaryL = 0
+                    else:
+                        self.stationaryL += 1
+
+                if self.isFiring == True:
+                    if self.walkingRight == True:
+                        self.image = fire[0].convert_alpha()
+                    if self.walkingLeft == True:
+                        self.image = fire[1].convert_alpha()
+                        
+                # Keep player on the screen
+                if self.rect.left < 0:
+                    self.rect.left = 0
+                elif self.rect.right > 795 and self.max_movement == 200:
+                    self.rect.right = 800
+                elif self.rect.bottom >= 533 and self.inHole != True:
+                    self.rect.bottom = 533
+                    self.isFalling = False
+                    self.jumpheight = 275
+
+                if self.inHole == True and self.rect.top >= 600:
+                    self.health = -1
+            else:
+                self.rect.move_ip(2, 0)
+
+                #walking animation
+                if self.walk % 25 == 0:
+                    ind = int(self.walk / 25)
+                    self.image = walking[ind].convert_alpha()
+                if self.walk == 1:
+                    self.image = walking[0].convert_alpha()
                 if self.walk == 99:
                     self.walk = 0
                 else:
                     self.walk += 1
-                if self.rect.left < self.max_movement:
-                    self.rect.move_ip(2, 0)
-            if pressed_keys[K_SPACE]:
-                self.isFiring = True
-                self.walk = 0
-                self.walkL = 0
-            
-            #walking animation
-            if self.walk % 25 == 0 and self.walkingRight == True and self.isStationary == False:
-                ind = int(self.walk / 25)
-                self.image = walking[ind].convert_alpha()
-            if self.walk == 1 and self.isStationary == False:
-                self.image = walking[0].convert_alpha()
-            if self.walkL % 25 == 0 and self.walkingLeft == True and self.isStationary == False:
-                ind2 = int(self.walkL / 25)
-                self.image = walkingL[ind2].convert_alpha()
-            if self.walkL == 1 and self.isStationary == False:
-                self.image = walkingL[0].convert_alpha()
 
-            #Jumping mechanism
-            if self.isJumping == True:
-                self.isStationary = False
-                if self.playjump == True:
-                    pygame.mixer.Sound.play(jump)
-                self.playjump = False
-                if self.rect.top > self.jumpheight:
-                    self.rect.move_ip(0, -3)
-                    if self.walkingRight == True:
-                        self.image = jumping[0].convert_alpha()
-                    else:
-                        self.image = jumping[1].convert_alpha()
-                else:
-                    self.isFalling = True
-                    self.isJumping = False
-                    self.jump = 0
-            #Falling Mechanism
-            if self.isFalling == True:
-                self.rect.move_ip(0, 2)
-                if self.rect.bottom == 533:
-                    self.walk = 0
-                    self.walkL = 0
-
-            #stationary animation
-            if self.isStationary == True and self.walkingRight == True:
-                self.stationaryL = 0
-                if self.stationary % 50 == 0:
-                    ind = int(self.stationary / 50)
-                    self.image = stationary[ind].convert_alpha()
-                if self.stationary == 99:
-                    self.stationary = 0
-                else:
-                    self.stationary += 1
-            if self.isStationary == True and self.walkingLeft == True:
-                self.stationary = 0
-                if self.stationaryL % 50 == 0:
-                    ind = int(self.stationaryL / 50)
-                    self.image = stationaryL[ind].convert_alpha()
-                if self.stationaryL == 99:
-                    self.stationaryL = 0
-                else:
-                    self.stationaryL += 1
-
-            if self.isFiring == True:
-                if self.walkingRight == True:
-                    self.image = fire[0].convert_alpha()
-                if self.walkingLeft == True:
-                    self.image = fire[1].convert_alpha()
-                    
-            # Keep player on the screen
-            if self.rect.left < 0:
-                self.rect.left = 0
-            elif self.rect.right > 795 and self.max_movement == 200:
-                self.rect.right = 800
-            elif self.rect.bottom >= 533 and self.inHole != True:
-                self.rect.bottom = 533
-                self.isFalling = False
-                self.jumpheight = 275
-
-            if self.inHole == True and self.rect.top >= 600:
-                self.health = -1
                 
         class Fireball(pygame.sprite.Sprite):
             def __init__(self, player):
@@ -1080,6 +1096,7 @@ def game_loop(highscore):
         #Player/End Flag collision
         if pygame.sprite.spritecollideany(player, end):
             player.max_movement = 1000
+            player.round_over = True
             
 
         
