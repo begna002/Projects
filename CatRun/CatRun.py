@@ -21,7 +21,7 @@ def text_objects(text, font):
     return textSurface, textSurface.get_rect()
 
 def game_intro():
-    pygame.mixer.music.load('vaporwave.wav')
+    pygame.mixer.music.load('sounds/vaporwave.wav')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
     
@@ -104,7 +104,7 @@ def level_complete_screen():
 
                 
 def game_loop():
-    pygame.mixer.music.load('vaporwave2.wav')
+    pygame.mixer.music.load('sounds/vaporwave2.wav')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
     walking = []
@@ -128,6 +128,9 @@ def game_loop():
     stationaryL = []
     stationaryL.append(pygame.image.load('cat_imgs/catstationaryL1.png'))
     stationaryL.append(pygame.image.load('cat_imgs/catstationaryL2.png'))
+
+    fireball1_img = pygame.image.load('fireball1.png')
+    fireball2_img = pygame.image.load('fireball2.png')
 
     snail_img = []
     snail_img.append(pygame.image.load('snail_imgs/snail1.png'))
@@ -163,6 +166,7 @@ def game_loop():
     wall = pygame.image.load('wall.png')
     hole = pygame.image.load('hole.png')
     moon = pygame.image.load('moon.png')
+    ground_img = pygame.image.load('ground.png')
     
     cloud_imgs = []
     for i in range(1, 6):
@@ -314,7 +318,7 @@ def game_loop():
         class Fireball(pygame.sprite.Sprite):
             def __init__(self, player):
                 super(Player.Fireball, self).__init__()
-                self.image = pygame.image.load('fireball1.png').convert_alpha()
+                self.image = fireball1_img.convert_alpha()
                 self.rect = self.image.get_rect()
                 self.rect.left = player.rect.centerx
                 self.rect.bottom = player.rect.bottom - 20
@@ -325,7 +329,7 @@ def game_loop():
         class Fireball2(pygame.sprite.Sprite):
             def __init__(self, player):
                 super(Player.Fireball2, self).__init__()
-                self.image = pygame.image.load('fireball2.png').convert_alpha()
+                self.image = fireball2_img.convert_alpha()
                 self.rect = self.image.get_rect()
                 self.rect.right = player.rect.centerx
                 self.rect.bottom = player.rect.bottom - 20
@@ -337,7 +341,7 @@ def game_loop():
     class Ground(pygame.sprite.Sprite):
         def __init__(self, player, x_pos):
             super(Ground, self).__init__()
-            self.image = pygame.image.load('ground.png').convert()
+            self.image = ground_img.convert()
             self.rect = self.image.get_rect()
             self.rect.left = x_pos
             self.rect.bottom = 600
@@ -858,12 +862,12 @@ def game_loop():
 
     running = True
 
-    fireblast = pygame.mixer.Sound('blast.wav')
-    jump = pygame.mixer.Sound('jump.wav')
-    playerhit = pygame.mixer.Sound('playerhit.wav')
-    up_1 = pygame.mixer.Sound('1-up.wav')
-    jewel_pick = pygame.mixer.Sound('jewel.wav')
-    brick_break = pygame.mixer.Sound('brick_break.wav')
+    fireblast = pygame.mixer.Sound('sounds/blast.wav')
+    jump = pygame.mixer.Sound('sounds/jump.wav')
+    playerhit = pygame.mixer.Sound('sounds/playerhit.wav')
+    up_1 = pygame.mixer.Sound('sounds/1-up.wav')
+    jewel_pick = pygame.mixer.Sound('sounds/jewel.wav')
+    brick_break = pygame.mixer.Sound('sounds/brick_break.wav')
     fireball_delay = 150
     fireball2_delay = 150
     score = 0
