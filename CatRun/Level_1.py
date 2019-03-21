@@ -1,3 +1,4 @@
+#Copyright 2019, Moti Begna
 
 import pygame
 import random
@@ -14,7 +15,7 @@ screen = pygame.display.set_mode((800, 600))
 background = pygame.Surface(screen.get_size())
 background.fill((135, 150, 250))
  
-def game_loop(highscore):
+def game_loop(highscore, lives):
     pygame.mixer.music.load('sounds/vaporwave2.wav')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
@@ -64,7 +65,7 @@ def game_loop(highscore):
     health_img.append(pygame.image.load('healthempty.png'))
 
     jewel_img = []
-    jewel_img.append(pygame.image.load('Jewel.png'))
+    jewel_img.append(pygame.image.load('Jewel1.png'))
 
     end_img = []
     end_img.append(pygame.image.load('end1.png'))
@@ -87,6 +88,38 @@ def game_loop(highscore):
     for i in range(1, 4):
         veg_imgs.append(pygame.image.load('vegetation_imgs/vegetation' + str(i) + '.png'))
 
+    def text_objects(text, font):
+        textSurface = font.render(text, True, (255, 255, 255))
+        return textSurface, textSurface.get_rect()
+
+    def pause():
+        pause = True
+
+        while pause:
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        pause = False
+                        pygame.quit()
+                        quit()
+                    if event.key == K_SPACE:
+                        pause = False
+                        return True
+            largeText = pygame.font.SysFont('bebas neue', 115)
+            TextSurf, TextRect = text_objects("Paused", largeText)
+            TextRect.center = ((800/2), (200))
+            screen.blit(TextSurf, TextRect)
+
+            smallText = pygame.font.SysFont('bebas neue', 50)
+            TextSurf2, TextRect2 = text_objects("Press Escape to Quit", smallText)
+            TextRect2.center = ((800/2), (275))
+            screen.blit(TextSurf2, TextRect2)
+
+            TextSurf3, TextRect3 = text_objects("Press Space to Resume", smallText)
+            TextRect3.center = ((800/2), (325))
+            screen.blit(TextSurf3, TextRect3)
+            pygame.display.update()
+            
     class Player(pygame.sprite.Sprite):
         def __init__(self):
             super(Player, self).__init__()
@@ -124,7 +157,7 @@ def game_loop(highscore):
                     self.isFiring = False
                 if pressed_keys[K_DOWN] and self.isJumping == False and self.isFalling == False:
                     self.isStationary = False
-                    self.rect.move_ip(0, 2)
+                    self.rect.move_ip(0, 3)
                 if pressed_keys[K_LEFT]:
                     self.isStationary = False
                     self.walkingLeft = True
@@ -136,7 +169,7 @@ def game_loop(highscore):
                     else:
                         self.walkL += 1
                     if self.rect.left > self.min_movement:
-                        self.rect.move_ip(-2, 0)
+                        self.rect.move_ip(-3, 0)
                 if pressed_keys[K_RIGHT]:
                     self.isStationary = False
                     self.walkingRight = True
@@ -148,7 +181,7 @@ def game_loop(highscore):
                     else:
                         self.walk += 1
                     if self.rect.left < self.max_movement:
-                        self.rect.move_ip(2, 0)
+                        self.rect.move_ip(3, 0)
                 if pressed_keys[K_SPACE]:
                     self.isFiring = True
                     self.walk = 0
@@ -173,7 +206,7 @@ def game_loop(highscore):
                         pygame.mixer.Sound.play(jump)
                     self.playjump = False
                     if self.rect.top > self.jumpheight:
-                        self.rect.move_ip(0, -3)
+                        self.rect.move_ip(0, -4)
                         if self.walkingRight == True:
                             self.image = jumping[0].convert_alpha()
                         else:
@@ -184,7 +217,7 @@ def game_loop(highscore):
                         self.jump = 0
                 #Falling Mechanism
                 if self.isFalling == True:
-                    self.rect.move_ip(0, 2)
+                    self.rect.move_ip(0, 3)
                     if self.rect.bottom == 533:
                         self.walk = 0
                         self.walkL = 0
@@ -228,7 +261,9 @@ def game_loop(highscore):
                 if self.inHole == True and self.rect.top >= 600:
                     self.health = -1
             else:
-                self.rect.move_ip(2, 0)
+                self.rect.move_ip(3, 0)
+                if self.rect.bottom <= 533:
+                    self.rect.move_ip(0, 3)
 
                 #walking animation
                 if self.walk % 25 == 0:
@@ -250,7 +285,7 @@ def game_loop(highscore):
                 self.rect.left = player.rect.centerx
                 self.rect.bottom = player.rect.bottom - 20
             def update(self):
-                self.rect.move_ip(3, 0)
+                self.rect.move_ip(4, 0)
                 if self.rect.left > 800:
                     self.kill()
         class Fireball2(pygame.sprite.Sprite):
@@ -261,7 +296,7 @@ def game_loop(highscore):
                 self.rect.right = player.rect.centerx
                 self.rect.bottom = player.rect.bottom - 20
             def update(self):
-                self.rect.move_ip(-3, 0)
+                self.rect.move_ip(-4, 0)
                 if self.rect.right < 0:
                     self.kill()
         
@@ -273,10 +308,11 @@ def game_loop(highscore):
             self.rect.left = x_pos
             self.rect.bottom = 600
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                self.rect.move_ip(2, 0)
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                    self.rect.move_ip(3, 0)
                 
     class Hole(pygame.sprite.Sprite):
         def __init__(self, player, x_pos):
@@ -286,10 +322,11 @@ def game_loop(highscore):
             self.rect.left = x_pos
             self.rect.bottom = 599
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                self.rect.move_ip(2, 0)
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                    self.rect.move_ip(3, 0)
         
 
     class Health(pygame.sprite.Sprite):
@@ -313,29 +350,30 @@ def game_loop(highscore):
             self.moving_up = False
             self.movement_delay = 0
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                    self.rect.move_ip(2, 0)
-            if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 7:
-                self.rect.move_ip(0, 2)
-                self.movement += 1
-                self.movement_delay = 0
-            if self.moving_down == True and self.movement == self.movement_max:
-                self.movement = 0
-                self.moving_down = False
-                self.moving_up = True
-            if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 7:
-                self.rect.move_ip(0, -2)
-                self.movement += 1
-                self.movement_delay = 0
-            if self.moving_up == True and self.movement == self.movement_max:
-                self.movement = 0
-                self.moving_up = False
-                self.moving_down = True
-            self.movement_delay += 1
-            if self.rect.bottom > 600:
-                self.kill()
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
+                if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 7:
+                    self.rect.move_ip(0, 2)
+                    self.movement += 1
+                    self.movement_delay = 0
+                if self.moving_down == True and self.movement == self.movement_max:
+                    self.movement = 0
+                    self.moving_down = False
+                    self.moving_up = True
+                if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 7:
+                    self.rect.move_ip(0, -2)
+                    self.movement += 1
+                    self.movement_delay = 0
+                if self.moving_up == True and self.movement == self.movement_max:
+                    self.movement = 0
+                    self.moving_up = False
+                    self.moving_down = True
+                self.movement_delay += 1
+                if self.rect.bottom > 600:
+                    self.kill()
 
     class Jewel(pygame.sprite.Sprite):
         def __init__(self, x_pos, y_pos):
@@ -350,29 +388,30 @@ def game_loop(highscore):
             self.moving_up = False
             self.movement_delay = 0
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                    self.rect.move_ip(2, 0)
-            if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 7:
-                self.rect.move_ip(0, 2)
-                self.movement += 1
-                self.movement_delay = 0
-            if self.moving_down == True and self.movement == self.movement_max:
-                self.movement = 0
-                self.moving_down = False
-                self.moving_up = True
-            if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 7:
-                self.rect.move_ip(0, -2)
-                self.movement += 1
-                self.movement_delay = 0
-            if self.moving_up == True and self.movement == self.movement_max:
-                self.movement = 0
-                self.moving_up = False
-                self.moving_down = True
-            self.movement_delay += 1
-            if self.rect.bottom > 600:
-                self.kill()
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
+                if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 7:
+                    self.rect.move_ip(0, 2)
+                    self.movement += 1
+                    self.movement_delay = 0
+                if self.moving_down == True and self.movement == self.movement_max:
+                    self.movement = 0
+                    self.moving_down = False
+                    self.moving_up = True
+                if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 7:
+                    self.rect.move_ip(0, -2)
+                    self.movement += 1
+                    self.movement_delay = 0
+                if self.moving_up == True and self.movement == self.movement_max:
+                    self.movement = 0
+                    self.moving_up = False
+                    self.moving_down = True
+                self.movement_delay += 1
+                if self.rect.bottom > 600:
+                    self.kill()
                     
     ##class Enemy(pygame.sprite.Sprite):
     ##    def __init__(self):
@@ -399,12 +438,12 @@ def game_loop(highscore):
 
 
         def update(self, pressed_keys):
-
-            #movement update
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                    self.rect.move_ip(2, 0)
+            if player.round_over == False:
+                #movement update
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
 
             #movement animation
             if self.stationary % 50 == 0:
@@ -433,71 +472,72 @@ def game_loop(highscore):
             self.hurt = False
 
         def update(self, pressed_keys):
+            if player.round_over == False:
 
-            #movement update
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                #movement update
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
+                if self.moving_left == True and self.movement < self.movement_max and self.movement_delay == 7:
+                    self.rect.move_ip(-2, 0)
+                    self.movement += 1
+                    self.movement_delay = 0
+                if self.moving_left == True and self.movement == self.movement_max:
+                    self.movement = 0
+                    self.moving_left = False
+                    self.moving_right = True
+                if self.moving_right == True and self.movement < self.movement_max and self.movement_delay == 7:
                     self.rect.move_ip(2, 0)
-            if self.moving_left == True and self.movement < self.movement_max and self.movement_delay == 7:
-                self.rect.move_ip(-2, 0)
-                self.movement += 1
-                self.movement_delay = 0
-            if self.moving_left == True and self.movement == self.movement_max:
-                self.movement = 0
-                self.moving_left = False
-                self.moving_right = True
-            if self.moving_right == True and self.movement < self.movement_max and self.movement_delay == 7:
-                self.rect.move_ip(2, 0)
-                self.movement += 1
-                self.movement_delay = 0
-            if self.moving_right == True and self.movement == self.movement_max:
-                self.movement = 0
-                self.moving_right = False
-                self.moving_left = True
-            self.movement_delay += 1
+                    self.movement += 1
+                    self.movement_delay = 0
+                if self.moving_right == True and self.movement == self.movement_max:
+                    self.movement = 0
+                    self.moving_right = False
+                    self.moving_left = True
+                self.movement_delay += 1
 
-            #movement animation
-            if self.moving_left == True and self.hurt == False:
-                self.moving_aniR = 0
-                if self.moving_aniL % 50 == 0:
-                    ind = int(self.moving_aniL / 50)
-                    self.image = snail_img[ind].convert_alpha()
-                if self.moving_aniL == 99:
+                #movement animation
+                if self.moving_left == True and self.hurt == False:
+                    self.moving_aniR = 0
+                    if self.moving_aniL % 50 == 0:
+                        ind = int(self.moving_aniL / 50)
+                        self.image = snail_img[ind].convert_alpha()
+                    if self.moving_aniL == 99:
+                        self.moving_aniL = 0
+                    else:
+                        self.moving_aniL += 1
+                if self.moving_left == True and self.hurt == True:
+                    self.moving_aniR = 0
+                    if self.moving_aniL % 50 == 0:
+                        ind = int(self.moving_aniL / 50)
+                        self.image = snail_img_hurt[ind].convert_alpha()
+                    if self.moving_aniL == 99:
+                        self.moving_aniL = 0
+                    else:
+                        self.moving_aniL += 1
+                        
+                if self.moving_right == True and self.hurt == False:
                     self.moving_aniL = 0
-                else:
-                    self.moving_aniL += 1
-            if self.moving_left == True and self.hurt == True:
-                self.moving_aniR = 0
-                if self.moving_aniL % 50 == 0:
-                    ind = int(self.moving_aniL / 50)
-                    self.image = snail_img_hurt[ind].convert_alpha()
-                if self.moving_aniL == 99:
+                    if self.moving_aniR % 50 == 0:
+                        ind = int(self.moving_aniR / 50)
+                        self.image = snail_imgR[ind].convert_alpha()
+                    if self.moving_aniR == 99:
+                        self.moving_aniR = 0
+                    else:
+                        self.moving_aniR += 1
+                if self.moving_right == True and self.hurt == True:
                     self.moving_aniL = 0
-                else:
-                    self.moving_aniL += 1
+                    if self.moving_aniR % 50 == 0:
+                        ind = int(self.moving_aniR / 50)
+                        self.image = snail_imgR_hurt[ind].convert_alpha()
+                    if self.moving_aniR == 99:
+                        self.moving_aniR = 0
+                    else:
+                        self.moving_aniR += 1
                     
-            if self.moving_right == True and self.hurt == False:
-                self.moving_aniL = 0
-                if self.moving_aniR % 50 == 0:
-                    ind = int(self.moving_aniR / 50)
-                    self.image = snail_imgR[ind].convert_alpha()
-                if self.moving_aniR == 99:
-                    self.moving_aniR = 0
-                else:
-                    self.moving_aniR += 1
-            if self.moving_right == True and self.hurt == True:
-                self.moving_aniL = 0
-                if self.moving_aniR % 50 == 0:
-                    ind = int(self.moving_aniR / 50)
-                    self.image = snail_imgR_hurt[ind].convert_alpha()
-                if self.moving_aniR == 99:
-                    self.moving_aniR = 0
-                else:
-                    self.moving_aniR += 1
-                
-            if self.rect.bottom > 600:
-                self.kill()
+                if self.rect.bottom > 600:
+                    self.kill()
                     
     class Platform(pygame.sprite.Sprite):
         def __init__(self, player, x, y):
@@ -509,12 +549,13 @@ def game_loop(highscore):
             self.rect.bottom = y
 
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                    self.rect.move_ip(2, 0)
-            if self.rect.bottom > 600:
-                self.kill()
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
+                if self.rect.bottom > 600:
+                    self.kill()
 
     class Platform2(pygame.sprite.Sprite):
         def __init__(self, player, x, y, can_break, ver):
@@ -527,12 +568,13 @@ def game_loop(highscore):
             self.can_break = can_break
 
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                    self.rect.move_ip(2, 0)
-            if self.rect.bottom > 1000:
-                self.kill()
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
+                if self.rect.bottom > 1000:
+                    self.kill()
 
     class Wall(pygame.sprite.Sprite):
         def __init__(self, player):
@@ -543,10 +585,11 @@ def game_loop(highscore):
             self.rect.bottom = 533
 
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                    self.rect.move_ip(2, 0)
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                        self.rect.move_ip(3, 0)
 
 
     class Vegetation(pygame.sprite.Sprite):
@@ -558,12 +601,13 @@ def game_loop(highscore):
             self.rect.bottom = y
 
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200:
-                self.rect.move_ip(-2, 0)
-            if pressed_keys[K_LEFT] and player.rect.left <= 100:
-                self.rect.move_ip(2, 0)
-            if self.rect.right < 0:
-                self.kill()
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200:
+                    self.rect.move_ip(-3, 0)
+                if pressed_keys[K_LEFT] and player.rect.left <= 100:
+                    self.rect.move_ip(3, 0)
+                if self.rect.right < 0:
+                    self.kill()
 
     class Moon(pygame.sprite.Sprite):
         def __init__(self, player, x, y):
@@ -576,15 +620,16 @@ def game_loop(highscore):
             self.delay_max = 50
 
         def update(self, pressed_keys):
-            if pressed_keys[K_RIGHT] and player.rect.left >= 200 and self.delay >= self.delay_max:
-                self.rect.move_ip(-1, 0)
-                self.delay = 0
-            if pressed_keys[K_LEFT] and player.rect.left <= 100 and self.delay >= self.delay_max:
-                self.rect.move_ip(1, 0)
-                self.delay = 0
-            self.delay += 1
-            if self.rect.right < 0:
-                self.kill()
+            if player.round_over == False:
+                if pressed_keys[K_RIGHT] and player.rect.left >= 200 and self.delay >= self.delay_max:
+                    self.rect.move_ip(-2, 0)
+                    self.delay = 0
+                if pressed_keys[K_LEFT] and player.rect.left <= 100 and self.delay >= self.delay_max:
+                    self.rect.move_ip(2, 0)
+                    self.delay = 0
+                self.delay += 1
+                if self.rect.right < 0:
+                    self.kill()
 
                 
 ##    class Cloud(pygame.sprite.Sprite):
@@ -674,7 +719,8 @@ def game_loop(highscore):
 
 
     #platfrom initializations
-    platform_pos = [(400, 400), (900, 400), (2600, 300), (3900, 400), (4400, 300), (4800, 300), (5300, 20)]
+    platform_pos = [(400, 400), (900, 400), (2600, 300),
+                    (3900, 400), (4400, 300), (4800, 300), (5350, 20)]
     new_platform = []
     platform = []
     for i in range(len(platform_pos)):
@@ -712,7 +758,7 @@ def game_loop(highscore):
     #Ground initialization
     x_pos = -100
     new_ground = []
-    for i in range(50):
+    for i in range(12):
         new_ground.append(Ground(player, x_pos))
         all_sprites.add(new_ground[i])
         x_pos += 800
@@ -746,7 +792,7 @@ def game_loop(highscore):
     jewel.append(pygame.sprite.Group())
     all_sprites.add(new_jewel[0])
     jewel[0].add(new_jewel[0])
-    x_pos = 5350
+    x_pos = 5400
     for i in range(1, 5):
         new_jewel.append(Jewel(x_pos, -90))
         jewel.append(pygame.sprite.Group())
@@ -798,6 +844,7 @@ def game_loop(highscore):
     fireball_delay = 150
     fireball2_delay = 150
     score = 0
+    new_lives = lives
     running = True
     condition = "Death"
 
@@ -810,7 +857,7 @@ def game_loop(highscore):
             player.isFalling = True
 
         #Player hits top of platfrom
-        if player.rect.bottom - 2 <= new_platform[i].rect.top and player.rect.right > new_platform[i].rect.left and player.rect.left < new_platform[i].rect.right:
+        if player.rect.bottom - 3 <= new_platform[i].rect.top and player.rect.right > new_platform[i].rect.left and player.rect.left < new_platform[i].rect.right:
             if pressed_keys[K_UP]:
                 player.isJumping = True
                 player.playjump = True
@@ -852,7 +899,7 @@ def game_loop(highscore):
                 player.rect.top = new_platform2[i].rect.bottom - 990
 
         #Player hits top of platfrom
-        if player.rect.bottom - 2 <= new_platform2[i].rect.top and player.rect.right + 10 > new_platform2[i].rect.left and broken == False:
+        if player.rect.bottom - 3 <= new_platform2[i].rect.top and player.rect.right + 10 > new_platform2[i].rect.left and broken == False:
             can_Jump = True
             if pressed_keys[K_UP]:
                 player.isJumping = True
@@ -880,7 +927,12 @@ def game_loop(highscore):
     def HighScore(highscore):
         font = pygame.font.SysFont('bebas neue', 25)
         text = font.render("High Score: " + str(highscore), True, (0, 0, 0))
-        screen.blit(text, (375, 25))
+        screen.blit(text, (330, 25))
+
+    def display_lives(new_lives):
+        font = pygame.font.SysFont('bebas neue', 25)
+        text = font.render("Lives: " + str(new_lives), True, (0, 0, 0))
+        screen.blit(text, (500, 25))
 
     while running:
         new_fireball[0].kill()
@@ -888,8 +940,11 @@ def game_loop(highscore):
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    running = False
-                    condtion = "Quit"
+                    pygame.mixer.music.pause()
+                    running = pause()
+                    pygame.mixer.music.unpause()
+                    if running == False:
+                        condtion = "Quit"
                 #fireball right event
                 if event.key == K_SPACE and fireball_delay > 150 and player.walkingRight == True:
                     fireball_count += 1
@@ -909,9 +964,7 @@ def game_loop(highscore):
                     fireball2[fireball_count2].add(new_fireball2[fireball_count2])
                     pygame.mixer.Sound.play(fireblast)
                     fireball2_delay = 0
-                
-            elif event.type == QUIT:
-                pygame.quit()
+
     ##        elif event.type == ADDENEMY:
     ##            new_enemy = Enemy()
     ##            enemies.add(new_enemy)
@@ -1155,6 +1208,7 @@ def game_loop(highscore):
         #END GAME CONDITIONS
         if player.health == -1:
             condition = "Death"
+            new_lives -= 1
             running = False
 
         if player.rect.right > 999:
@@ -1171,6 +1225,7 @@ def game_loop(highscore):
             score = 0
         Scoreboard(score)
         HighScore(highscore)
+        display_lives(new_lives)
 
         pygame.display.update()
-    return score, condition
+    return score, condition, new_lives
