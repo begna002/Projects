@@ -1055,6 +1055,10 @@ def game_loop(new_score, highscore, lives):
                         pygame.mixer.Sound.play(burn)
                     player.isFalling = True
                     player.inHole = True
+                if player.rect.right > new_hole[i].rect.right and player.rect.bottom - 5> new_hole[i].rect.top:
+                    player.rect.right = new_hole[i].rect.right
+                if player.rect.left < new_hole[i].rect.left and player.rect.bottom - 5> new_hole[i].rect.top:
+                    player.rect.left = new_hole[i].rect.left
 
         #Player/End Flag collision
         if pygame.sprite.spritecollideany(player, end):

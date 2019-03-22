@@ -314,7 +314,7 @@ def life_lost():
         screen.blit(TextSurf3, TextRect3)
         pygame.display.update()
 
-def level_complete_screen():
+def level_complete_screen(level):
     death = True
 
     while death:
@@ -327,7 +327,7 @@ def level_complete_screen():
                 if event.key == K_SPACE:
                     return True
         largeText = pygame.font.SysFont('bebas neue', 115)
-        TextSurf, TextRect = text_objects("Level Complete!", largeText)
+        TextSurf, TextRect = text_objects("Level " + str(level) + " Complete!", largeText)
         TextRect.center = ((800/2), (200))
         screen.blit(TextSurf, TextRect)
 
@@ -360,6 +360,7 @@ while(play):
     #LEVEL 1
     redo = True
     temp_lives = lives
+    level = 1
     while redo == True:
         Level_1_intro.loop(lives, temp_lives)
         temp_score = new_score
@@ -369,7 +370,7 @@ while(play):
             file.write(str(new_score))
             file.close()
         if condition == "Complete":
-            play = level_complete_screen()
+            play = level_complete_screen(level)
             lives += 1
             redo = False
         if condition == "Death":
@@ -385,6 +386,7 @@ while(play):
     if condition == "Complete":
         redo = True
         temp_lives = lives
+        level = 2
         while redo == True:
             Level_2_intro.loop(lives, temp_lives)
             temp_score = new_score
@@ -394,7 +396,7 @@ while(play):
                 file.write(str(new_score))
                 file.close()
             if condition == "Complete":
-                play = level_complete_screen()
+                play = level_complete_screen(level)
                 lives += 1
                 redo = False
             if condition == "Death":
