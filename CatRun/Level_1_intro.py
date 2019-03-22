@@ -68,7 +68,7 @@ def loop(lives, temp_lives):
         TextSurf, TextRect = text_objects("Level 1", largeText)
         TextRect.center = ((800/2), (200))
 
-        msg = "Baware the Snails!"
+        msg = "Beware the Snails!"
         if temp_lives - 1 == lives:
             msg = "Minor set back, try again"
         if lives == 1:

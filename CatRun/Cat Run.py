@@ -24,7 +24,7 @@ def text_objects(text, font):
 
 
 
-def game_intro():
+def game_intro(highscore):
     pygame.mixer.music.load('sounds/vaporwave.wav')
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
@@ -49,15 +49,16 @@ def game_intro():
             
         def update(self):
             #walking animation
-            if self.walk % 115 == 0:
-                ind = int(self.walk / 115)
+            if self.walk % 70 == 0:
+                ind = int(self.walk / 70)
                 self.image = walking[ind].convert_alpha()
             if self.walk == 1:
                 self.image = walking[0].convert_alpha()
-            if self.walk == 459:
+            if self.walk == 279:
                 self.walk = 0
             else:
                 self.walk += 1
+
             if self.start == True:
                 self.rect.move_ip(1, 0)
 
@@ -74,7 +75,7 @@ def game_intro():
             self.moving_up = False
             self.movement_delay = 0
         def update(self):
-            if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 15:
+            if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 7:
                 self.rect.move_ip(0, 2)
                 self.movement += 1
                 self.movement_delay = 0
@@ -82,7 +83,7 @@ def game_intro():
                 self.movement = 0
                 self.moving_down = False
                 self.moving_up = True
-            if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 15:
+            if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 7:
                 self.rect.move_ip(0, -2)
                 self.movement += 1
                 self.movement_delay = 0
@@ -113,10 +114,10 @@ def game_intro():
     intro = True
     while intro:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
             if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    quit()
                 if event.key == K_SPACE:
                     player.start = True
 
@@ -133,8 +134,131 @@ def game_intro():
         if player.rect.left > 800:
             player.kill()
             intro = False
+
+        
+        smallText = pygame.font.SysFont('bebas neue', 50)
+        TextSurf3, TextRect3 = text_objects("High Score: " + str(highscore), smallText)
+        TextRect3.center = ((800/2), (560))
+        screen.blit(TextSurf3, TextRect3)
+        
         pygame.display.update()
 
+def game_end(new_score):
+    pygame.mixer.music.load('sounds/vaporwave.wav')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.2)
+    background_img = pygame.image.load('ending_img.png').convert()
+
+    walking = []
+    for i in range(1, 5):
+        walking.append(pygame.image.load('cat_imgs/catwalk' + str(i) + '.png'))
+
+    jewel_img = []
+    jewel_img.append(pygame.image.load('Jewel1.png'))
+
+    class Player(pygame.sprite.Sprite):
+        def __init__(self):
+            super(Player, self).__init__()
+            self.image = walking[0].convert_alpha()
+            self.rect = self.image.get_rect()
+            self.rect.left = 373
+            self.rect.bottom = 533
+            self.walk = 0
+            self.start = False
+            
+        def update(self):
+            #walking animation
+            if self.walk % 70 == 0:
+                ind = int(self.walk / 70)
+                self.image = walking[ind].convert_alpha()
+            if self.walk == 1:
+                self.image = walking[0].convert_alpha()
+            if self.walk == 279:
+                self.walk = 0
+            else:
+                self.walk += 1
+
+
+    class Jewel(pygame.sprite.Sprite):
+        def __init__(self, x_pos, y_pos):
+            super(Jewel, self).__init__()
+            self.image = jewel_img[0].convert_alpha()
+            self.rect = self.image.get_rect()
+            self.rect.left = x_pos
+            self.rect.bottom = y_pos
+            self.movement_max = 25
+            self.movement = 0
+            self.moving_down = True
+            self.moving_up = False
+            self.movement_delay = 0
+        def update(self):
+            if self.moving_down == True and self.movement < self.movement_max and self.movement_delay == 7:
+                self.rect.move_ip(0, 2)
+                self.movement += 1
+                self.movement_delay = 0
+            if self.moving_down == True and self.movement == self.movement_max:
+                self.movement = 0
+                self.moving_down = False
+                self.moving_up = True
+            if self.moving_up == True and self.movement < self.movement_max and self.movement_delay == 7:
+                self.rect.move_ip(0, -2)
+                self.movement += 1
+                self.movement_delay = 0
+            if self.moving_up == True and self.movement == self.movement_max:
+                self.movement = 0
+                self.moving_up = False
+                self.moving_down = True
+            self.movement_delay += 1
+            if self.rect.bottom > 600:
+                self.kill()
+
+    player = Player()
+    all_sprites = pygame.sprite.Group()
+    all_sprites.add(player)
+
+    new_jewel = []
+    jewel = []
+    x_pos = 120
+    for i in range(2):
+        new_jewel.append(Jewel(x_pos, 225))
+        jewel.append(pygame.sprite.Group())
+        all_sprites.add(new_jewel[i])
+        jewel[i].add(new_jewel[i])
+
+        x_pos += 545
+    new_jewel_length = len(new_jewel)
+
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    quit()
+                if event.key == K_SPACE:
+                    return "Play Again"
+
+
+        screen.blit(background_img, [0, 0])
+        
+        player.update()
+        for i in range(new_jewel_length):
+            new_jewel[i].update()
+
+        for entity in all_sprites:
+            screen.blit(entity.image, entity.rect)
+
+        if player.rect.left > 800:
+            player.kill()
+            intro = False
+
+        smallText = pygame.font.SysFont('bebas neue', 50)
+        TextSurf3, TextRect3 = text_objects("Your Score: " + str(new_score), smallText)
+        TextRect3.center = ((800/2), (560))
+        screen.blit(TextSurf3, TextRect3)
+        
+        pygame.display.update()
+        
 def death_screen():
     death = True
 
@@ -221,15 +345,16 @@ def level_complete_screen():
 play = True
 
 while(play):
-    game_intro()
     lives = 3
     file = open("Highscore.txt", "r")
     highscore = int(file.readline())
     file.close()
     new_score = 0
 
-    while lives > 0:
-        new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
+    game_intro(highscore)
+
+##    while lives > 0:
+##        new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
 
     
     #LEVEL 1
@@ -280,4 +405,9 @@ while(play):
                 else:
                     play = death_screen()
                     redo = False
+
+    #END
+    if condition == "Complete" or condition == "Death":
+        ending = game_end(new_score)
+        
                     

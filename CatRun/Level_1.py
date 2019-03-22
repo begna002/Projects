@@ -169,7 +169,7 @@ def game_loop(highscore, lives):
                     else:
                         self.walkL += 1
                     if self.rect.left > self.min_movement:
-                        self.rect.move_ip(-3, 0)
+                        self.rect.move_ip(-2, 0)
                 if pressed_keys[K_RIGHT]:
                     self.isStationary = False
                     self.walkingRight = True
@@ -181,7 +181,7 @@ def game_loop(highscore, lives):
                     else:
                         self.walk += 1
                     if self.rect.left < self.max_movement:
-                        self.rect.move_ip(3, 0)
+                        self.rect.move_ip(2, 0)
                 if pressed_keys[K_SPACE]:
                     self.isFiring = True
                     self.walk = 0

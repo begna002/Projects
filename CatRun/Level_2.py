@@ -58,7 +58,7 @@ def game_loop(new_score, highscore, lives):
     end_img.append(pygame.image.load('end2.png'))
 
     platform_img = []
-    for i in range(1, 10):
+    for i in range(1, 13):
         platform_img.append(pygame.image.load('platform_imgs/Platform' + str(i) + '.png'))
 
     wall = pygame.image.load('wall.png')
@@ -66,7 +66,7 @@ def game_loop(new_score, highscore, lives):
     for i in range(2, 6):
         hole.append(pygame.image.load('hole' + str(i) + '.png'))
         
-    ground_img = pygame.image.load('ground.png')
+    ground_img = pygame.image.load('ground2.png')
 
     
  
@@ -140,7 +140,7 @@ def game_loop(new_score, highscore, lives):
                     self.isFiring = False
                 if pressed_keys[K_DOWN] and self.isJumping == False and self.isFalling == False:
                     self.isStationary = False
-                    self.rect.move_ip(0, 3)
+                    self.rect.move_ip(0, 2)
                 if pressed_keys[K_LEFT]:
                     self.isStationary = False
                     self.walkingLeft = True
@@ -164,7 +164,7 @@ def game_loop(new_score, highscore, lives):
                     else:
                         self.walk += 1
                     if self.rect.left < self.max_movement:
-                        self.rect.move_ip(3, 0)
+                        self.rect.move_ip(2, 0)
                 if pressed_keys[K_SPACE]:
                     self.isFiring = True
                     self.walk = 0
@@ -514,7 +514,7 @@ def game_loop(new_score, highscore, lives):
                     self.kill()
 
             if self.can_move == True:
-                if self.ver != 6 and self.ver != 7:
+                if self.ver != 6 and self.ver != 7 and self.ver != 10 and self.ver != 11:
                     #movement animation
                     if self.moving_down == True and self.rect.top + 30 < self.min_height and self.movement_delay == 7:
                         self.rect.move_ip(0, 3)
@@ -533,14 +533,14 @@ def game_loop(new_score, highscore, lives):
                         self.moving_up = False
                         self.moving_down = True
                     self.movement_delay += 1
-                if self.ver == 6 or self.ver == 7:
+                if self.ver == 6 or self.ver == 7 or self.ver == 10 or self.ver == 11:
                     self.has_moved_left = False
                     self.has_moved_right = False
                     #movement animation
                     if self.moving_up == True and self.rect.top > self.max_height and self.movement_delay == 7:
-                        if self.ver == 6:
+                        if self.ver == 6 or self.ver == 10:
                             self.rect.move_ip(2, -3)
-                        if self.ver == 7:
+                        if self.ver == 7 or self.ver == 11:
                             self.rect.move_ip(-2, -3)
                         self.movement_delay = 0
                         self.has_moved_left = True
@@ -548,9 +548,9 @@ def game_loop(new_score, highscore, lives):
                         self.moving_up = False
                         self.moving_down = True
                     if self.moving_down == True and self.rect.top + 30 < self.min_height and self.movement_delay == 7:
-                        if self.ver == 6:
+                        if self.ver == 6 or self.ver == 10:
                             self.rect.move_ip(-2, 3)
-                        if self.ver == 7:
+                        if self.ver == 7 or self.ver == 11:
                             self.rect.move_ip(2, 3)
                         self.movement_delay = 0
                         self.has_moved_right = True
@@ -603,7 +603,7 @@ def game_loop(new_score, highscore, lives):
     fireball2[fireball_count2].add(new_fireball[fireball_count2])
 
     #End Flag initialization
-    new_end = End(player, 8000, 533)
+    new_end = End(player, 9500, 533)
     end = pygame.sprite.Group()
     all_sprites.add(new_end)
     end.add(new_end)
@@ -649,12 +649,41 @@ def game_loop(new_score, highscore, lives):
                      (5640, 300, False, False, 0, 0, 1),
                      (5750, 533, False, False, 0, 0, 8),
                      (5900, 0, False, True, 0, -300, 5),
-                     (6090, 300, False, False, 0, 0, 1),
-                     (6160, 300, False, False, 0, 0, 1),
-                     (6230, 300, False, False, 0, 0, 1),
-                     (6300, 433, False, False, 0, 0, 4),
-                     (6300, 300, False, False, 0, 0, 4),
-                     (6300, 200, False, False, 0, 0, 4),]
+                     (6190, 300, False, False, 0, 0, 1),
+                     (6260, 300, False, False, 0, 0, 1),
+                     (6330, 300, False, False, 0, 0, 1),
+                     (6400, 433, False, False, 0, 0, 4),
+                     (6400, 300, False, False, 0, 0, 4),
+                     (6400, 200, False, False, 0, 0, 4),
+                     (6470, 400, False, False, 0, 0, 1),
+                     (6600, 533, False, False, 0, 0, 1),
+                     (6670, 533, False, False, 0, 0, 4),
+                     (6670, 400, False, False, 0, 0, 4),
+                     (6740, 239, False, False, 0, 0, 9),
+                     (7010, 429, False, False, 0, 0, 9),
+                     (6850, 0, False, True, -40, -200, 5),
+                     (6970, 239, False, False, 0, 0, 9),
+                     (7240, 429, False, False, 0, 0, 9),
+                     (7080, -100, False, True, -40, -200, 5),
+                     (7200, 239, False, False, 0, 0, 9),
+                     (7470, 429, False, False, 0, 0, 9),
+                     (7310, -200, False, True, -40, -200, 5),
+                     (7430, 239, False, False, 0, 0, 9),
+                     (7540, -300, False, True, -40, -200, 5),
+                     (7530, 429, False, False, 0, 0, 9),
+                     (7762, 429, False, False, 0, 0, 4),
+                     (7762, 229, False, False, 0, 0, 4),
+                     (7080, 500, False, True, 600, 429, 5),
+                     (7310, 600, False, True, 600, 429, 5),
+                     (7540, 700, False, True, 600, 429, 5),
+                     (8100, 400, False, True, 500, 250, 10),
+                     (8200, 499, False, True, 500, 250, 11),
+                     (8500, 400, False, True, 500, 250, 10),
+                     (8600, 499, False, True, 500, 250, 11),
+                     (8900, 400, False, True, 500, 250, 10),
+                     (9000, 499, False, True, 500, 250, 11),
+                     (8300, 707, False, True, 533, 310, 4),
+                     (8700, 707, False, True, 533, 310, 4)]
     
     new_platform2 = []
     platform2 = []
@@ -675,7 +704,7 @@ def game_loop(new_score, highscore, lives):
     #Ground initialization
     x_pos = -100
     new_ground = []
-    for i in range(10):
+    for i in range(14):
         new_ground.append(Ground(player, x_pos))
         all_sprites.add(new_ground[i])
         x_pos += 800
@@ -718,13 +747,43 @@ def game_loop(new_score, highscore, lives):
         jewel[i].add(new_jewel[i])
         x_pos += 50
         
-    x_pos = 6130
+    x_pos = 6230
     for i in range(5, 8):
         new_jewel.append(Jewel(x_pos, 185, 0))
         jewel.append(pygame.sprite.Group())
         all_sprites.add(new_jewel[i])
         jewel[i].add(new_jewel[i])
         x_pos += 50
+        
+    x_pos = 7060
+    num = 0
+    for i in range(8, 20):
+        if num % 2 == 0:
+            ver = 0
+        else:
+            ver = 1
+        new_jewel.append(Jewel(x_pos, 307, ver))
+        jewel.append(pygame.sprite.Group())
+        all_sprites.add(new_jewel[i])
+        jewel[i].add(new_jewel[i])
+        x_pos += 50
+        num += 1
+
+    y_pos = 200
+    for i in range(20, 23):
+        new_jewel.append(Jewel(8325, y_pos, 0))
+        jewel.append(pygame.sprite.Group())
+        all_sprites.add(new_jewel[i])
+        jewel[i].add(new_jewel[i])
+        y_pos -= 50
+
+    y_pos = 200
+    for i in range(23, 26):
+        new_jewel.append(Jewel(8725, y_pos, 0))
+        jewel.append(pygame.sprite.Group())
+        all_sprites.add(new_jewel[i])
+        jewel[i].add(new_jewel[i])
+        y_pos -= 50
         
     #adding player last to be infront of objects, except top health
     all_sprites.add(player)
@@ -746,6 +805,7 @@ def game_loop(new_score, highscore, lives):
     up_1 = pygame.mixer.Sound('sounds/1-up.wav')
     jewel_pick = pygame.mixer.Sound('sounds/jewel.wav')
     brick_break = pygame.mixer.Sound('sounds/brick_break.wav')
+    burn = pygame.mixer.Sound('sounds/playerhit.wav')
     fireball_delay = 150
     fireball2_delay = 150
     score = new_score
@@ -916,13 +976,16 @@ def game_loop(new_score, highscore, lives):
         #player/platform2 collison
         for i in range(new_platform_length2):
             if pygame.sprite.spritecollideany(player, platform2[i]):
-                if new_platform2[i].ver == 5:
+                if new_platform2[i].ver == 5 or new_platform2[i].ver == 10or new_platform2[i].ver == 11:
                     #Only hit if on screen
                     if new_platform2[i].rect.bottom > 0:
                         pygame.mixer.Sound.play(playerhit)
                         new_health[player.health].image = health_img[1].convert_alpha()
                         player.health -= 1
-                        player.rect.right -= 50
+                        if player.rect.left < new_platform2[i].rect.left:
+                            player.rect.right -= 50
+                        if player.rect.right > new_platform2[i].rect.right:
+                            player.rect.right += 50
                 else:
                     Player_Platform2(player, new_platform2, pressed_keys, i)
                     
@@ -988,6 +1051,8 @@ def game_loop(new_score, highscore, lives):
         for i in range(new_hole_length):
             if pygame.sprite.spritecollideany(player, holes[i]):
                 if player.rect.left >= new_hole[i].rect.left and player.rect.right < new_hole[i].rect.right:
+                    if player.rect.bottom >= 535 and player.rect.bottom <= 537:
+                        pygame.mixer.Sound.play(burn)
                     player.isFalling = True
                     player.inHole = True
 
