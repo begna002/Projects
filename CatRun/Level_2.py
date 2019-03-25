@@ -58,7 +58,7 @@ def game_loop(new_score, highscore, lives):
     end_img.append(pygame.image.load('end2.png'))
 
     platform_img = []
-    for i in range(1, 13):
+    for i in range(1, 14):
         platform_img.append(pygame.image.load('platform_imgs/Platform' + str(i) + '.png'))
 
     wall = pygame.image.load('wall.png')
@@ -66,7 +66,10 @@ def game_loop(new_score, highscore, lives):
     for i in range(2, 6):
         hole.append(pygame.image.load('hole' + str(i) + '.png'))
         
-    ground_img = pygame.image.load('ground2.png')
+    ground_img = []
+    ground_img.append(pygame.image.load('ground2.png'))
+    ground_img.append(pygame.image.load('ground3.png'))
+
 
     
  
@@ -128,7 +131,7 @@ def game_loop(new_score, highscore, lives):
             self.max_movement = 200
             self.round_over = False
             
-        def update(self, pressed_keys):
+        def update(self, pressed_keys, fireball_delay, fireball2_delay):
             if self.round_over == False:
                 self.isStationary = True
                 self.isFiring = False
@@ -225,10 +228,11 @@ def game_loop(new_score, highscore, lives):
                     else:
                         self.stationaryL += 1
 
+                #firing animation
                 if self.isFiring == True:
-                    if self.walkingRight == True:
+                    if self.walkingRight == True and fireball_delay < 10:
                         self.image = fire[0].convert_alpha()
-                    if self.walkingLeft == True:
+                    if self.walkingLeft == True and fireball2_delay < 10:
                         self.image = fire[1].convert_alpha()
                         
                 # Keep player on the screen
@@ -240,6 +244,9 @@ def game_loop(new_score, highscore, lives):
                     self.rect.bottom = 533
                     self.isFalling = False
                     self.jumpheight = 275
+                elif self.rect.top <= 67:
+                    self.isFalling = True
+                    self.jumpheight = 67
 
                 if self.inHole == True and self.rect.top >= 600:
                     self.health = -1
@@ -284,12 +291,12 @@ def game_loop(new_score, highscore, lives):
                     self.kill()
         
     class Ground(pygame.sprite.Sprite):
-        def __init__(self, player, x_pos):
+        def __init__(self, player, x_pos, y_pos, ver):
             super(Ground, self).__init__()
-            self.image = ground_img.convert()
+            self.image = ground_img[ver].convert()
             self.rect = self.image.get_rect()
             self.rect.left = x_pos
-            self.rect.bottom = 600
+            self.rect.bottom = y_pos
         def update(self, pressed_keys):
             if player.round_over == False:
                 if pressed_keys[K_RIGHT] and player.rect.left >= 200:
@@ -503,6 +510,8 @@ def game_loop(new_score, highscore, lives):
             self.movement_delay = 0
             self.has_moved_left = False
             self.has_moved_right = False
+            self.jumpad = 0
+            self.jumpad_y = y
 
         def update(self, pressed_keys):
             if player.round_over == False:
@@ -558,6 +567,15 @@ def game_loop(new_score, highscore, lives):
                         self.moving_down = False
                         self.moving_up = True
                     self.movement_delay += 1
+
+            #Jumpad Animation
+            if self.ver == 8:
+                self.jumpad -= 1
+                if self.jumpad == 20:
+                    self.rect.bottom -= 46
+                if self.jumpad == 1:
+                    self.image = platform_img[self.ver].convert_alpha()
+                    self.rect.bottom = self.jumpad_y
 
 
     class Wall(pygame.sprite.Sprite):
@@ -683,7 +701,9 @@ def game_loop(new_score, highscore, lives):
                      (8900, 400, False, True, 500, 250, 10),
                      (9000, 499, False, True, 500, 250, 11),
                      (8300, 707, False, True, 533, 310, 4),
-                     (8700, 707, False, True, 533, 310, 4)]
+                     (8500, 100, False, True, 0, 0, 5),
+                     (8700, 707, False, True, 533, 310, 4),
+                     (8900, 100, False, True, 0, 0, 5)]
     
     new_platform2 = []
     platform2 = []
@@ -705,7 +725,15 @@ def game_loop(new_score, highscore, lives):
     x_pos = -100
     new_ground = []
     for i in range(14):
-        new_ground.append(Ground(player, x_pos))
+        new_ground.append(Ground(player, x_pos, 600, 0))
+        all_sprites.add(new_ground[i])
+        x_pos += 800
+    new_ground_length = len(new_ground)
+
+    #Ceiling initialization
+    x_pos = -100
+    for i in range(14, 28):
+        new_ground.append(Ground(player, x_pos, 67, 1))
         all_sprites.add(new_ground[i])
         x_pos += 800
     new_ground_length = len(new_ground)
@@ -902,7 +930,11 @@ def game_loop(new_score, highscore, lives):
                 player.playjump = True
                 player.isFalling = False
                 player.jumpheight = new_platform2[i].rect.top - 400
-                
+                if new_platform2[i].rect.bottom == new_platform2[i].jumpad_y:
+                    new_platform2[i].image = platform_img[12].convert_alpha()
+                    new_platform2[i].jumpad = 40
+                    new_platform2[i].rect.bottom += 20
+                    
 
         #Player hits left of platform
         if player.rect.right >= new_platform2[i].rect.left and player.rect.left + 40 < new_platform2[i].rect.left and player.rect.bottom > new_platfrom2[i].rect.top and broken == False:
@@ -976,7 +1008,7 @@ def game_loop(new_score, highscore, lives):
         #player/platform2 collison
         for i in range(new_platform_length2):
             if pygame.sprite.spritecollideany(player, platform2[i]):
-                if new_platform2[i].ver == 5 or new_platform2[i].ver == 10or new_platform2[i].ver == 11:
+                if new_platform2[i].ver == 5 or new_platform2[i].ver == 10 or new_platform2[i].ver == 11:
                     #Only hit if on screen
                     if new_platform2[i].rect.bottom > 0:
                         pygame.mixer.Sound.play(playerhit)
@@ -1070,7 +1102,7 @@ def game_loop(new_score, highscore, lives):
 
         ##Fixed Updates
         pressed_keys = pygame.key.get_pressed()
-        player.update(pressed_keys)
+        player.update(pressed_keys, fireball_delay, fireball2_delay)
         new_end.update(pressed_keys)
 
         for i in range(new_platform_length):  
@@ -1078,6 +1110,7 @@ def game_loop(new_score, highscore, lives):
 
         for i in range(new_platform_length2):  
             platform2[i].update(pressed_keys)
+      
 
         for i in range(new_ground_length):
             new_ground[i].update(pressed_keys)

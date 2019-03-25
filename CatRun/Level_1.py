@@ -145,7 +145,7 @@ def game_loop(highscore, lives):
             self.max_movement = 200
             self.round_over = False
             
-        def update(self, pressed_keys):
+        def update(self, pressed_keys, fireball_delay, fireball2_delay):
             if self.round_over == False:
                 self.isStationary = True
                 self.isFiring = False
@@ -242,10 +242,11 @@ def game_loop(highscore, lives):
                     else:
                         self.stationaryL += 1
 
+                #Firing Animation
                 if self.isFiring == True:
-                    if self.walkingRight == True:
+                    if self.walkingRight == True and fireball_delay < 10:
                         self.image = fire[0].convert_alpha()
-                    if self.walkingLeft == True:
+                    if self.walkingLeft == True and fireball2_delay < 10:
                         self.image = fire[1].convert_alpha()
                         
                 # Keep player on the screen
@@ -667,16 +668,18 @@ def game_loop(highscore, lives):
     x_pos = 100
     ind = 0
     new_veg = []
-    for i in range(50):
+    for i in range(20):
         new_veg.append(Vegetation(player, x_pos, 533, ind))
         all_sprites.add(new_veg[i])
         
-        x_pos += 20 + random.randint(0, 1000)
+        x_pos += 300 + random.randint(0, 1000)
         # No vegetation over holes, need to find a better way to do this later
         if x_pos > 3400 and x_pos < 3800:
             x_pos = 3800
         if x_pos > 4400 and x_pos < 5100:
             x_pos = 5100
+        if x_pos > 7750 and x_pos < 9050:
+            x_pos = 10000
         ind = random.randint(0, 2)
     new_veg_length = len(new_veg)
     
@@ -712,7 +715,7 @@ def game_loop(highscore, lives):
     fireball2[fireball_count2].add(new_fireball[fireball_count2])
 
     #End Flag initialization
-    new_end = End(player, 8000, 533)
+    new_end = End(player, 9200, 533)
     end = pygame.sprite.Group()
     all_sprites.add(new_end)
     end.add(new_end)
@@ -720,7 +723,8 @@ def game_loop(highscore, lives):
 
     #platfrom initializations
     platform_pos = [(400, 400), (900, 400), (2600, 300),
-                    (3900, 400), (4400, 300), (4800, 300), (5350, 20)]
+                    (3900, 400), (4400, 300), (4800, 300), (5350, 20),
+                    (7900, 500), (8300, 400), (8700, 300)]
     new_platform = []
     platform = []
     for i in range(len(platform_pos)):
@@ -758,14 +762,14 @@ def game_loop(highscore, lives):
     #Ground initialization
     x_pos = -100
     new_ground = []
-    for i in range(12):
+    for i in range(14):
         new_ground.append(Ground(player, x_pos))
         all_sprites.add(new_ground[i])
         x_pos += 800
     new_ground_length = len(new_ground)
 
     #Hole initialization
-    hole_pos = [3500, 4400, 4600, 4800]
+    hole_pos = [3500, 4400, 4600, 4800, 7750, 7950, 8150, 8350, 8550, 8750]
     new_hole = []
     holes = []
     for i in range(len(hole_pos)):
@@ -800,13 +804,26 @@ def game_loop(highscore, lives):
         jewel[i].add(new_jewel[i])
 
         x_pos += 50
+        
+    new_jewel.append(Jewel(8030, 390))
+    jewel.append(pygame.sprite.Group())
+    all_sprites.add(new_jewel[5])
+    jewel[5].add(new_jewel[5])
 
+    x_pos = 8750
+    for i in range(6, 10):
+        new_jewel.append(Jewel(x_pos, 190))
+        jewel.append(pygame.sprite.Group())
+        all_sprites.add(new_jewel[i])
+        jewel[i].add(new_jewel[i])
 
+        x_pos += 50
+        
     #snail initialization
     snail_pos = [(400, 533, 30, 200), (1000, 342, 50, 100), (1900, 533, 25, 200),
                  (2200, 533, 170, 200), (2500, 533, 12, 200), (4000, 533, 100, 200),
                  (4500, 242, 50, 100), (4900, 242, 50, 100), (5300, 533, 32, 200),
-                  (5600, 533, 190, 200)]
+                  (5600, 533, 190, 200), (8400, 342, 50, 100), (8800, 242, 50, 100)]
     new_snail = []
     for i in range(len(snail_pos)):
         direction = random.randint(0, 1)
@@ -1160,7 +1177,7 @@ def game_loop(highscore, lives):
 
         ##Fixed Updates
         pressed_keys = pygame.key.get_pressed()
-        player.update(pressed_keys)
+        player.update(pressed_keys, fireball_delay, fireball2_delay)
         new_moon.update(pressed_keys)
         new_end.update(pressed_keys)
 

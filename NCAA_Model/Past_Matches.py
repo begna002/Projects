@@ -125,6 +125,9 @@ def history(team):
     elite_eight = []
     ee_winner = []
     ee_score = []
+    sweet_sixteen = []
+    ss_winner = []
+    ss_score = []
     last = False
     found = False
     print("")
@@ -149,6 +152,10 @@ def history(team):
                 elite_eight.append(d['year'][i])
                 ee_winner.append(d['other_team'][i])
                 ee_score.append(d['score'][i])
+            if d['round'][i] == 3:
+                sweet_sixteen.append(d['year'][i])
+                ss_winner.append(d['other_team'][i])
+                ss_score.append(d['score'][i])
                 
     if len(champion) > 0:
         print("")
@@ -168,6 +175,12 @@ def history(team):
         for i in range(len(elite_eight)):
             print(elite_eight[i], "losing to", ee_winner[i], "| Score:", ee_score[i])
     
+    if len(sweet_sixteen) > 0:
+        print("")
+        print("Went to the Sweet Sixteen in:")
+        for i in range(len(sweet_sixteen)):
+            print(sweet_sixteen[i], "losing to", ss_winner[i], "| Score:", ss_score[i])
+
     if found == False:
         print(team, "has not played in the NCAA tournament since 1985")
 
