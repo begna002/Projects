@@ -353,8 +353,8 @@ while(play):
 
     game_intro(highscore)
 
-    while lives > 0:
-        new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
+##    while lives > 0:
+##        new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
 
     
     #LEVEL 1

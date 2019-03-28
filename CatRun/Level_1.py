@@ -413,20 +413,7 @@ def game_loop(highscore, lives):
                 self.movement_delay += 1
                 if self.rect.bottom > 600:
                     self.kill()
-                    
-    ##class Enemy(pygame.sprite.Sprite):
-    ##    def __init__(self):
-    ##        super(Enemy, self).__init__()
-    ##        self.image = pygame.image.load('missile.png').convert()
-    ##        self.image.set_colorkey((255, 255, 255), RLEACCEL)
-    ##        self.rect = self.image.get_rect(
-    ##            center=(random.randint(820, 900), random.randint(300, 500)))
-    ##        self.speed = random.randint(1, 2)
-    ##
-    ##    def update(self):
-    ##        self.rect.move_ip(-self.speed, 0)
-    ##        if self.rect.right < 0:
-    ##            self.kill()
+
 
     class End(pygame.sprite.Sprite):
         def __init__(self, player, x, y):
@@ -691,9 +678,6 @@ def game_loop(highscore, lives):
 ##    all_sprites.add(new_cloud[cloud_count])
 ##
 ##
-##    # Create a custom event for adding a new enemy.
-##    ##ADDENEMY = pygame.USEREVENT + 1
-##    ##pygame.time.set_timer(ADDENEMY, 1000)
 ##    ADDCLOUD = pygame.USEREVENT + 2
 ##    pygame.time.set_timer(ADDCLOUD, 2000)
 
@@ -864,6 +848,7 @@ def game_loop(highscore, lives):
     new_lives = lives
     running = True
     condition = "Death"
+    cheat = []
 
     #Player/Platform Collision Handling
     def Player_Platform(player, new_platfrom, pressed_keys, i):
@@ -962,6 +947,14 @@ def game_loop(highscore, lives):
                     pygame.mixer.music.unpause()
                     if running == False:
                         condtion = "Quit"
+                if event.key == K_UP:
+                    cheat.append(1)
+                if event.key == K_DOWN:
+                    cheat.append(2)
+                if event.key == K_LEFT:
+                    cheat.append(3)
+                if event.key == K_RIGHT:
+                    cheat.append(4)
                 #fireball right event
                 if event.key == K_SPACE and fireball_delay > 150 and player.walkingRight == True:
                     fireball_count += 1
@@ -971,6 +964,7 @@ def game_loop(highscore, lives):
                     fireball[fireball_count].add(new_fireball[fireball_count])
                     pygame.mixer.Sound.play(fireblast)
                     fireball_delay = 0
+                    cheat = []
 
                 #fireball left event
                 if event.key == K_SPACE and fireball2_delay > 150 and player.walkingLeft == True:
@@ -981,11 +975,7 @@ def game_loop(highscore, lives):
                     fireball2[fireball_count2].add(new_fireball2[fireball_count2])
                     pygame.mixer.Sound.play(fireblast)
                     fireball2_delay = 0
-
-    ##        elif event.type == ADDENEMY:
-    ##            new_enemy = Enemy()
-    ##            enemies.add(new_enemy)
-    ##            all_sprites.add(new_enemy)
+                    cheat = []
                 
 ##            elif event.type == ADDCLOUD:
 ##                speed = random.randint(3, 7)
@@ -1237,13 +1227,27 @@ def game_loop(highscore, lives):
             running = False
 
 
-    ##    if isEnemy:
-    ##        if pygame.sprite.spritecollideany(new_enemy, fireball):
-    ##            new_enemy.kill()
-
         #no negative score
         if score < 0:
             score = 0
+
+        #CHEATS
+        if len(cheat) == 8:
+            #PLUS 100 SCORE
+            if cheat == [1, 2, 1, 2, 3, 4, 3, 4]:
+                score += 100
+                pygame.mixer.Sound.play(jewel_pick)
+                cheat = []
+            #PLUS 1 LIFE
+            elif cheat == [3, 1, 4, 2, 3, 1, 4, 2]:
+                new_lives += 1
+                cheat = []
+            #NO SNAILS
+            elif cheat == [2, 2, 1, 1, 2, 2, 1, 1]:
+                for i in range(new_snail_length):
+                    new_snail[i].rect.bottom = 3000
+            else:
+                cheat = []
         Scoreboard(score)
         HighScore(highscore)
         display_lives(new_lives)

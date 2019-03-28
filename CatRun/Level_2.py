@@ -155,7 +155,7 @@ def game_loop(new_score, highscore, lives):
                     else:
                         self.walkL += 1
                     if self.rect.left > self.min_movement:
-                        self.rect.move_ip(-3, 0)
+                        self.rect.move_ip(-2, 0)
                 if pressed_keys[K_RIGHT]:
                     self.isStationary = False
                     self.walkingRight = True
@@ -196,7 +196,7 @@ def game_loop(new_score, highscore, lives):
                         if self.walkingRight == True:
                             self.image = jumping[0].convert_alpha()
                         else:
-                            selfimage = jumping[1].convert_alpha()
+                            self.image = jumping[1].convert_alpha()
                     else:
                         self.isFalling = True
                         self.isJumping = False
@@ -598,10 +598,7 @@ def game_loop(new_score, highscore, lives):
                 
     #player inititalization
     player = Player()
-    all_sprites = pygame.sprite.Group()
-
-    ##enemies = pygame.sprite.Group()
-   
+    all_sprites = pygame.sprite.Group()   
 
     #fireball initialization
     fireball_count = 0
@@ -840,6 +837,7 @@ def game_loop(new_score, highscore, lives):
     new_lives = lives
     running = True
     condition = "Death"
+    cheat = []
 
     #Player/Platform Collision Handling
     def Player_Platform(player, new_platfrom, pressed_keys, i):
@@ -974,6 +972,14 @@ def game_loop(new_score, highscore, lives):
                     pygame.mixer.music.unpause()
                     if running == False:
                         condtion = "Quit"
+                if event.key == K_UP:
+                    cheat.append(1)
+                if event.key == K_DOWN:
+                    cheat.append(2)
+                if event.key == K_LEFT:
+                    cheat.append(3)
+                if event.key == K_RIGHT:
+                    cheat.append(4)
                 #fireball right event
                 if event.key == K_SPACE and fireball_delay > 150 and player.walkingRight == True:
                     fireball_count += 1
@@ -983,6 +989,7 @@ def game_loop(new_score, highscore, lives):
                     fireball[fireball_count].add(new_fireball[fireball_count])
                     pygame.mixer.Sound.play(fireblast)
                     fireball_delay = 0
+                    cheat = []
 
                 #fireball left event
                 if event.key == K_SPACE and fireball2_delay > 150 and player.walkingLeft == True:
@@ -993,6 +1000,7 @@ def game_loop(new_score, highscore, lives):
                     fireball2[fireball_count2].add(new_fireball2[fireball_count2])
                     pygame.mixer.Sound.play(fireblast)
                     fireball2_delay = 0
+                    cheat = []
 
 
         new_fireball_length = len(new_fireball)    
@@ -1153,14 +1161,28 @@ def game_loop(new_score, highscore, lives):
             condition = "Complete"
             running = False
 
-
-    ##    if isEnemy:
-    ##        if pygame.sprite.spritecollideany(new_enemy, fireball):
-    ##            new_enemy.kill()
-
         #no negative score
         if score < 0:
             score = 0
+
+        #CHEATS
+        if len(cheat) == 8:
+            #PLUS 100 SCORE
+            if cheat == [1, 2, 1, 2, 3, 4, 3, 4]:
+                score += 100
+                pygame.mixer.Sound.play(jewel_pick)
+                cheat = []
+            #PLUS 1 LIFE
+            elif cheat == [3, 1, 4, 2, 3, 1, 4, 2]:
+                new_lives += 1
+                cheat = []
+            #NO SPIKES
+            elif cheat == [2, 2, 1, 1, 2, 2, 1, 1]:
+                for i in range(new_platform_length2):
+                    if new_platform2[i].ver == 5 or new_platform2[i].ver == 10 or new_platform2[i].ver == 11:
+                        new_platform2[i].rect.bottom = 3000
+            else:
+                cheat = []
         Scoreboard(score)
         HighScore(highscore)
         display_lives(new_lives)
