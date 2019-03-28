@@ -176,7 +176,7 @@ def history(team):
             print(elite_eight[i], "losing to", ee_winner[i], "| Score:", ee_score[i])
     
     if len(sweet_sixteen) > 0:
-        print("")
+        print(" ")
         print("Went to the Sweet Sixteen in:")
         for i in range(len(sweet_sixteen)):
             print(sweet_sixteen[i], "losing to", ss_winner[i], "| Score:", ss_score[i])
