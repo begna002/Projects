@@ -37,23 +37,51 @@ def Start(scores, names):
     color3 = color_inactive
     active3 = False
 
+    button = pygame.mixer.Sound('button.wav')
+    play_sound1 = True
+    has_removed1 = True
+    play_sound2 = True
+    has_removed2 = True
+    play_sound3 = True
+    has_removed3 = True
+
     while pause:
         for event in pygame.event.get():
             if input_box1.collidepoint(pygame.mouse.get_pos()):
                 # Toggle the active variable.
                 active1 = True
+                if play_sound1 == True:
+                    pygame.mixer.Sound.play(button)
+                play_sound1 = False
+                has_removed1 = False
             else:
                 active1 = False
+                if play_sound1 == False:
+                    has_removed1 = True
+                
             if input_box2.collidepoint(pygame.mouse.get_pos()):
                 # Toggle the active variable.
                 active2 = True
+                if play_sound2 == True:
+                    pygame.mixer.Sound.play(button)
+                play_sound2 = False    
+                has_removed2 = False
             else:
                 active2 = False
+                if play_sound2 == False:
+                    has_removed2 = True
+                
             if input_box3.collidepoint(pygame.mouse.get_pos()):
                 # Toggle the active variable.
                 active3 = True
+                if play_sound3 == True:
+                    pygame.mixer.Sound.play(button)
+                play_sound3 = False
+                has_removed3 = False
             else:
                 active3 = False
+                if play_sound3 == False:
+                    has_removed3 = True
             # Change the current color of the input box.
             color1 = color_active if active1 else color_inactive
             color2 = color_active if active2 else color_inactive
@@ -139,6 +167,14 @@ def Start(scores, names):
         TextSurf5, TextRect5 = text_objects(str(scores[2]), smallText)
         TextRect5.center = ((550), (525))
         screen.blit(TextSurf5, TextRect5)
+
+        
+        if has_removed1 == True:
+            play_sound1 = True
+        if has_removed2 == True:
+            play_sound2 = True
+        if has_removed3 == True:
+            play_sound3 = True
         
         pygame.display.update()
 
@@ -226,6 +262,7 @@ def new_HighScore():
         # Blit the input_box rect.
         pygame.draw.rect(screen, color, input_box, 2)
 
+
         pygame.display.flip()
         clock.tick(30)
                   
@@ -235,6 +272,8 @@ def loop(speed):
     food_img = []
     food_img.append(pygame.image.load('food1.png'))
     food_img.append(pygame.image.load('food2.png'))
+    food_snd = pygame.mixer.Sound('food.wav')
+    impact = pygame.mixer.Sound('impact.wav')
 
 
     class Player(pygame.sprite.Sprite):
@@ -377,6 +416,7 @@ def loop(speed):
         for i in range(new_food_length):
             if pygame.sprite.spritecollideany(player, food[i]):
                 has_added = True
+                pygame.mixer.Sound.play(food_snd)
 
                 new_food[i].rect.bottom = 1000
 
@@ -452,6 +492,7 @@ def loop(speed):
 
         for i in range(len(new_addition)):
             if pygame.sprite.spritecollideany(player, addition[i]):
+                pygame.mixer.Sound.play(impact)
                 restart = End(score)
                 return restart
                 
@@ -473,6 +514,7 @@ def loop(speed):
             screen.blit(entity.image, entity.rect)
 
         if player.rect.right > 600 or player.rect.bottom > 600 or player.rect.left < 0 or player.rect.top < 0:
+            pygame.mixer.Sound.play(impact)
             restart = End(score)
             return restart
 

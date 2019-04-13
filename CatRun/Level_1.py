@@ -844,6 +844,7 @@ def game_loop(highscore, lives):
     brick_break = pygame.mixer.Sound('sounds/brick_break.wav')
     fireball_delay = 150
     fireball2_delay = 150
+    fireball_max = 150
     score = 0
     new_lives = lives
     running = True
@@ -956,7 +957,7 @@ def game_loop(highscore, lives):
                 if event.key == K_RIGHT:
                     cheat.append(4)
                 #fireball right event
-                if event.key == K_SPACE and fireball_delay > 150 and player.walkingRight == True:
+                if event.key == K_SPACE and fireball_delay > fireball_max and player.walkingRight == True:
                     fireball_count += 1
                     new_fireball.append(Player.Fireball(player))
                     fireball.append(pygame.sprite.Group())
@@ -967,7 +968,7 @@ def game_loop(highscore, lives):
                     cheat = []
 
                 #fireball left event
-                if event.key == K_SPACE and fireball2_delay > 150 and player.walkingLeft == True:
+                if event.key == K_SPACE and fireball2_delay > fireball_max and player.walkingLeft == True:
                     fireball_count2 += 1
                     new_fireball2.append(Player.Fireball2(player))
                     fireball2.append(pygame.sprite.Group())
@@ -1246,6 +1247,10 @@ def game_loop(highscore, lives):
             elif cheat == [2, 2, 1, 1, 2, 2, 1, 1]:
                 for i in range(new_snail_length):
                     new_snail[i].rect.bottom = 3000
+                cheat = []
+            #NO FIREBALL DELAY
+            elif cheat == [3, 2, 1, 2, 4, 2, 1, 2]:
+                fireball_max = 10
             else:
                 cheat = []
         Scoreboard(score)
