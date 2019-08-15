@@ -104,7 +104,7 @@ def Match_Up(team1, team2):
 def year_Champ(year):
     print("")
     for i in range(len(d['year'])):
-        if year == 2018:
+        if year == 2019:
             print(year, "NCAA CHAMPION:", d['other_team'][-1])
             print("Played against:", d['this_team'][-1])
             print("Score:", d['score'][-2])
@@ -194,8 +194,8 @@ def MOP(year):
 def helpmsg():
     print("")
     print("Options:")
-    print(" --NOTE: Dataset only spans from 1985-2018")
-    print(" --NOTE: If Team Name is greater than 2 words, combine with ''")
+    print(" --NOTE: Dataset only spans from 1985-2019")
+    print(" --NOTE: If Team Name is greater than or equal to 2 words, combine with ''")
     print(" --Type Winner Year to get Champion of the given year")
     print(" --Type MOP Year to get the Most Outstanding Player of the given year")
     print(" --Type All to get all NCAA Tournament match results")
@@ -259,7 +259,7 @@ while(ext != True):
         if inpt_list[0] == 'Winner' or inpt_list[0] == "winner":
             yearC = inpt_list[1]
             yearI = int(yearC)
-            if yearI > 2018 or yearI < 1985:
+            if yearI > 2019 or yearI < 1985:
                 print("Error: Given year is not within range")
             else:
                 year_Champ(yearI)
@@ -267,7 +267,7 @@ while(ext != True):
         elif inpt_list[0] == "MOP" or inpt_list[0] == "mop":
             yearC = inpt_list[1]
             yearI = int(yearC)
-            if yearI > 2018 or yearI < 1985:
+            if yearI > 2019 or yearI < 1985:
                 print("Error: Given year is not within range")
             else:
                 MOP(yearI)
