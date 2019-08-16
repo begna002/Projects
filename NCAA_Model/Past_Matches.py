@@ -64,7 +64,7 @@ def all_matches():
 def all_Teams():
     print("")
     for i in range(len(teams.TeamName)):
-        print(team_LST[i], "| First D1 Season:", teams.FirstD1Season[i], "| Last D1 Season:", teams.LastD1Season[i])
+        print(team_LST[i], "| First D1 Season:", teams.FirstD1Season[i])
 
 def Match_Up(team1, team2):
     print("")
@@ -257,12 +257,14 @@ while(ext != True):
 
     if len(inpt_list) == 2:
         if inpt_list[0] == 'Winner' or inpt_list[0] == "winner":
-            yearC = inpt_list[1]
-            yearI = int(yearC)
-            if yearI > 2019 or yearI < 1985:
-                print("Error: Given year is not within range")
+            if inpt_list[1] in team_LST:
+                yearC = inpt_list[1]
+                yearI = int(yearC)
+                if yearI > 2019 or yearI < 1985:
+                    print("Error: Given year is not within range")
             else:
-                year_Champ(yearI)
+                error_Message()
+                        
 
         elif inpt_list[0] == "MOP" or inpt_list[0] == "mop":
             yearC = inpt_list[1]
