@@ -257,13 +257,13 @@ while(ext != True):
 
     if len(inpt_list) == 2:
         if inpt_list[0] == 'Winner' or inpt_list[0] == "winner":
-            if inpt_list[1] in team_LST:
-                yearC = inpt_list[1]
-                yearI = int(yearC)
-                if yearI > 2019 or yearI < 1985:
-                    print("Error: Given year is not within range")
+            yearC = inpt_list[1]
+            yearI = int(yearC)
+            if yearI > 2019 or yearI < 1985:
+                print("Error: Given year is not within range")
             else:
-                error_Message()
+                year_Champ(yearI)
+
                         
 
         elif inpt_list[0] == "MOP" or inpt_list[0] == "mop":
