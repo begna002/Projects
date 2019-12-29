@@ -341,56 +341,27 @@ def level_complete_screen(level):
         screen.blit(TextSurf3, TextRect3)
         pygame.display.update()
 
+def main():
+    play = True
 
-play = True
+    while(play):
+        lives = 3
+        file = open("Highscore.txt", "r")
+        highscore = int(file.readline())
+        file.close()
+        new_score = 0
 
-while(play):
-    lives = 3
-    file = open("Highscore.txt", "r")
-    highscore = int(file.readline())
-    file.close()
-    new_score = 0
+        game_intro(highscore)
 
-    game_intro(highscore)
-
-##    while lives > 0:
-##        new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
-
-    
-    #LEVEL 1
-    redo = True
-    temp_lives = lives
-    level = 1
-    while redo == True:
-        Level_1_intro.loop(lives, temp_lives)
-        temp_score = new_score
-        new_score, condition, lives = Level_1.game_loop(highscore, lives)
-        if new_score > highscore:
-            file = open("Highscore.txt", "w")
-            file.write(str(new_score))
-            file.close()
-        if condition == "Complete":
-            play = level_complete_screen(level)
-            lives += 1
-            redo = False
-        if condition == "Death":
-            if lives > 0:
-                play = life_lost()
-                redo = True
-                new_score = temp_score
-            else:
-                play = death_screen()
-                redo = False
         
-    #LEVEL 2
-    if condition == "Complete":
+        #LEVEL 1
         redo = True
         temp_lives = lives
-        level = 2
+        level = 1
         while redo == True:
-            Level_2_intro.loop(lives, temp_lives)
+            Level_1_intro.loop(lives, temp_lives)
             temp_score = new_score
-            new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
+            new_score, condition, lives = Level_1.game_loop(highscore, lives)
             if new_score > highscore:
                 file = open("Highscore.txt", "w")
                 file.write(str(new_score))
@@ -407,9 +378,36 @@ while(play):
                 else:
                     play = death_screen()
                     redo = False
+            
+        #LEVEL 2
+        if condition == "Complete":
+            redo = True
+            temp_lives = lives
+            level = 2
+            while redo == True:
+                Level_2_intro.loop(lives, temp_lives)
+                temp_score = new_score
+                new_score, condition, lives = Level_2.game_loop(new_score, highscore, lives)
+                if new_score > highscore:
+                    file = open("Highscore.txt", "w")
+                    file.write(str(new_score))
+                    file.close()
+                if condition == "Complete":
+                    play = level_complete_screen(level)
+                    lives += 1
+                    redo = False
+                if condition == "Death":
+                    if lives > 0:
+                        play = life_lost()
+                        redo = True
+                        new_score = temp_score
+                    else:
+                        play = death_screen()
+                        redo = False
 
-    #END
-    if condition == "Complete" or condition == "Death":
-        ending = game_end(new_score)
+        #END
+        if condition == "Complete" or condition == "Death":
+            ending = game_end(new_score)
         
-                    
+if __name__== "__main__":
+    main()
